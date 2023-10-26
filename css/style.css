@@ -1,0 +1,103 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+body{
+  background-color: #dfe9f5;
+}
+
+.menuContenido{
+  height: 100vh;   
+  width: 300px;
+  background-color: cornflowerblue;
+  position: fixed;
+  padding: 10px;
+  flex: 0 0 300px;
+  transition: all .4s ease;
+}
+
+.head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.head img{
+  width: 50px;
+  border-radius: 50%;
+}
+
+.head i{
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.profile{
+  display: flex;
+  align-items: center;
+}
+
+.profile img{
+  margin-right: 10px;
+}
+
+.profile p{
+  margin-bottom: 0 !important;
+}
+
+.options div{
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+}
+
+.options div:hover{
+  background-color: rgba(255, 255, 255, 0.254);
+  transition: all .4s ease-in-out;
+}
+
+.options i{
+  font-size: 1.4rem;
+  margin-right: 10px;
+}
+
+.menuContenido.active{
+  width: 70px;  
+  transition: all .4s ease;
+}
+
+.menuContenido.active .option,
+.menuContenido.active .profile{
+  display: none;
+}
+
+.menuContenido.active .head i{
+  margin: auto;
+}
+
+.contenidoPagina {
+  display: flex;
+}
+
+#workspace {
+  /* Resto de las reglas CSS para el contenido */
+  flex: 1; /* El contenido se expandirá para llenar el espacio disponible */
+  margin: 0vh 0vh 0vh 52vh;
+}
+
+.contenedor{
+  overflow: auto;
+  width: 98%;
+}
+
+.form-group{
+  padding-left: 17px !important;
+}
