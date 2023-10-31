@@ -35,3 +35,36 @@ function enviarDatosLogin(idFormulario, classButton) {
         }
     });
 }
+
+function enviarInformacion(idFormulario, accion) {
+    let formulario = $("#" + idFormulario);
+    let respuesta = $(".respuesta");
+    let data = {};
+
+    formulario.find('.campoFormulario').each(function() {
+        let campo = $(this);
+        data[campo.attr('id')] = campo.val();
+    });
+    data["documentoId"] = $("#documentoId").val();
+    data["accion"] = accion;
+    $.ajax({
+        url: "action.php", // Archivo PHP que maneja la inserción en la base de datos
+        method: "POST",
+        data: data, // Enviar el objeto 'data' con los valores de los campos
+        success: function(response) {
+            try {
+                const jsonResponse = JSON.parse(response); // Intenta analizar la respuesta como JSON
+                if (jsonResponse.success === true) {
+                    mostrarAlertas([jsonResponse.message], "success");
+                } else if (jsonResponse.danger === true) {
+                    mostrarAlertas([jsonResponse.message], "danger");
+                } 
+            } catch (e) {
+
+            }
+        },
+        error: function(xhr, status, error) {
+            // Manejar errores en la solicitud AJAX
+        }
+    });
+}

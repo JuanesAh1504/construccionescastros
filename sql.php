@@ -11,4 +11,14 @@
             return false;
         }
     }
+
+    function sqlInsert($sql) {
+        global $conn; // Suponiendo que $conn es tu variable de conexión global
+    
+        if ($conn->query($sql) === TRUE) {
+            return true; // La consulta se ejecutó con éxito
+        } else {
+            return false; // Hubo un error en la ejecución de la consulta
+        }
+    }
 ?>

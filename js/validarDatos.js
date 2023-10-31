@@ -1,4 +1,4 @@
-function validarFormulario(idFormulario, classButton) {
+function validarFormulario(idFormulario, accion) {
   var campos = document.querySelectorAll(".campoFormulario");
   var errores = [];
 
@@ -37,7 +37,11 @@ function validarFormulario(idFormulario, classButton) {
     return false; // Evitar que el formulario se envíe si hay errores
   }
 
-  enviarDatosLogin(idFormulario, classButton);
+  if(idFormulario !== "formLoginInicial"){
+    enviarInformacion(idFormulario, accion);
+    return;
+  }
+  enviarDatosLogin(idFormulario);
 }
 
 function mostrarAlertas(alertas, tipoAlerta) {

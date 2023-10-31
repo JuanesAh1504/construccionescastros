@@ -12,9 +12,9 @@
                 $contrasena = $_POST['contrasena'];
                 $sqlLogin = sqlQuerySelect("SELECT usuario, contrasena FROM usuarios WHERE usuario = '".$_POST['nombreUsuario']."' AND contrasena = '".$_POST['contrasena']."'");
                 if($sqlLogin->num_rows > 0){
-                    $mensaje = mostrarError("Iniciando sesión...", "success");
+                    $mensaje = mostrarAlerta("Iniciando sesión...", "success");
                 } else {
-                    $mensaje = mostrarError("Nombre de usuario o contraseña inválido.", "danger");
+                    $mensaje = mostrarAlerta("Nombre de usuario o contraseña inválido.", "danger");
                 }
                 echo $mensaje;
             break;

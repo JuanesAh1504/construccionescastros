@@ -8,6 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=Roboto&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/comun.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+
     <title>Panel</title>
 </head>
 <body>
@@ -28,7 +31,7 @@
                 <i class='bx bxs-user-detail' ></i>
                 <span class="option">Usuario</span>
             </div>
-            <div onclick="loadContent('cotizacion.php')">
+            <div onclick="loadContent('cotizacion.php')" oncontextmenu="listarDocumentos('listarCotizacion.php')" >
                 <i class='bx bxs-user-detail' ></i>
                 <span class="option">Cotización</span>
             </div>
@@ -43,8 +46,13 @@
         </div>
     </aside>
     <div id="workspace"></div>
+    <div id="error-container"></div>   
+    <div class="respuesta"></div>
     <script src="js/menu.js"></script>
     <script src="js/functions.js"></script>
     <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/validarDatos.js"></script>
+    <script src="js/envioDatos.js"></script>
+
 </body>
 </html>
