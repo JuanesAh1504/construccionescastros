@@ -7,7 +7,7 @@ function validarFormulario(idFormulario, accion) {
     var valor = campo.value.trim();
     var label = obtenerTextoLabel(campo); // Obtener el texto del label
 
-    if (valor === "") {
+    if (valor === "" && $(campos[i]).attr('class').includes('obligatorio')) {
       errores.push('El campo "' + label + '" no puede estar vacío.');
       continue;
     }
@@ -19,12 +19,7 @@ function validarFormulario(idFormulario, accion) {
       }
     }
 
-     // Validar campos de tipo "date"
-    if (campo.type === "date") {
-      if (!validarFecha(valor)) {
-        errores.push('El campo "' + label + '" debe contener una fecha válida en el formato yyyy-mm-dd.');
-      }
-    }
+     
 
     if (campo.type === "select") {
       if (!validarSelect(valor)) {
@@ -98,4 +93,34 @@ function validarSelect(campo) {
       return false; 
   }
   return true; 
+}
+
+function validarFecha(fecha) {
+  // Expresión regular para validar el formato "dd/mm/aaaa"
+  var formatoFecha = /^\d{2}\/\d{2}\/\d{4}$/;
+
+  if (!formatoFecha.test(fecha)) {
+    // El formato de la fecha no es válido
+    return false;
+  }
+
+  // Separar el día, mes y año
+  var partesFecha = fecha.split('/');
+  var dia = parseInt(partesFecha[0], 10);
+  var mes = parseInt(partesFecha[1], 10) - 1; // Los meses en JavaScript van de 0 a 11
+  var año = parseInt(partesFecha[2], 10);
+
+  // Validar si el día, mes y año son completos
+  if (isNaN(dia) || isNaN(mes) || isNaN(año)) {
+    return false;
+  }
+
+  // Crear un objeto Date y verificar si es una fecha válida
+  var fechaValida = new Date(año, mes, dia);
+
+  return (
+    fechaValida.getDate() === dia &&
+    fechaValida.getMonth() === mes &&
+    fechaValida.getFullYear() === año
+  );
 }

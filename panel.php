@@ -27,9 +27,9 @@
                 <i class='bx bxs-dashboard' ></i>
                 <span class="option">Inicio</span>
             </div>
-            <div>
+            <div  onclick="loadContent('crearCliente.php')" oncontextmenu="listarDocumentos('listarClientes.php')">
                 <i class='bx bxs-user-detail' ></i>
-                <span class="option">Usuario</span>
+                <span class="option">Clientes</span>
             </div>
             <div onclick="loadContent('cotizacion.php')" oncontextmenu="listarDocumentos('listarCotizacion.php')" >
                 <i class='bx bxs-user-detail' ></i>

@@ -1,0 +1,19 @@
+.container{
+    margin: 350px 0px 0px 50px;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+.segundaSeccion{
+    padding: 50px 0px;
+    width: 10px;
+}
+
+span.cliente, span.alcanceObra, .tituloNuestraResponsabilidad{
+    font-weight: bold;
+}
+
+footer{
+    padding: 50px;
+    text-align: center;
+}

@@ -1,50 +1,245 @@
-<?php 
-    require('fpdf186/fpdf.php'); // Incluye la biblioteca FPDF
-    // Crear una instancia de FPDF
-    $pdf = new FPDF();
-    $pdf->AddPage();
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/sql.php';
 
-    // Establecer márgenes para el contenido
-    $pdf->SetLeftMargin(20); // Margen izquierdo
+function plantillaCotizacion() {
+    $sqlPDF = sqlQuerySelect("SELECT fechaCotizacion, organizacionEmpresas, alcanceObra, material, metros_unidades, precio_unitario, cantidad, precio_total, totalPorTodo, dias, manoObra, porcentajeAdmin, porcentajeUtilidad, alquilerEquipos, transporte, totalPorTodoTablaInput FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
+    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precio_unitario, cantidad, precio_total, totalPorTodo  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
 
-    // Agregar una imagen centrada al principio del PDF
-    $imagePath = 'img/logoCastrosSolucion.png'; // Ruta de la imagen que deseas agregar
-    $imageWidth = 100; // Ancho de la imagen en puntos
-    $imageX = ($pdf->GetPageWidth() - $imageWidth) / 2; // Calcula la posición X centrada
+    if ($sqlPDF && mysqli_num_rows($sqlPDF) > 0) {
+        $fila = $sqlPDF->fetch_assoc();
+        $html = '
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Cotización</title>
+            <style>
+                body{
+                    font-family: sans-serif;
+                    font-size: 16px;
+                }
 
-    // Calcula la posición Y de la imagen
-    $imageY = $pdf->GetY();
+                .container {
+                    margin: 350px 0px 0px 50px;
+                }
+                
+                .segundaSeccion {
+                    padding: 50px 0px;
+                    width: 10px;
+                }
+                
+                span.cliente, span.alcanceObra, .tituloNuestraResponsabilidad {
+                    font-weight: bold;
+                }
+                
+                footer {
+                    text-align: center;
+                }
+            
+                table {
+                    width: 100%;
+                    border-spacing: 0;
+                    font-family: Arial, sans-serif;
+                    border: 1px solid #ddd;
+                }
+            
+                th, td {
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                    border-right: 1px solid #ddd;
+                    text-align: center;
+                    word-wrap: break-word;
+                }
 
-    $pdf->Image($imagePath, $imageX, $imageY, $imageWidth);
+                td {
+                    white-space: nowrap;
+                }
+            
+                th {
+                    background-color: #138FCB;
+                    color: white;
+                    font-weight: bold;
+                    border-right: 1px solid #ddd;
+                }
+            
+                tr:last-child td {
+                    border-bottom: none;
+                }
+            
+                tr:hover {
+                    background-color: #f5f5f5;
+                }
 
-    // Ajusta la posición Y para el texto debajo de la imagen
-    $textY = $imageY + $imageWidth + 10; // 10 es la distancia entre la imagen y el texto
+                .card {
+                    display: flex;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    margin-top: 20px;
+                }
 
-    // Agregar el texto debajo de la imagen
-    $pdf->SetFont('Arial', '', 14);
-    $pdf->SetY($textY); // Establece la posición Y para el texto
-    $pdf->Cell(0, 10, 'Girardota 25 de octubre 2023', 0, 1, 'L');
-    $pdf->Cell(0, 10, 'Cordial Saludo. Envió Cotización', 0, 1, 'L');
+                .card img {
+                    max-width: 100px;
+                    object-fit: contain;
+                    padding: 20px;
+                    background-color: #138FCB;
+                }
 
-    // Puedes continuar agregando más contenido debajo del texto
-    $pdf->Cell(0, 10, 'Otro texto aquí', 0, 1, 'C');
+                .card-content {
+                    flex-grow: 1;
+                    padding: 20px;
+                }
 
-    // Generar el PDF en un búfer
-    ob_start();
-    $pdf->Output();
-    ob_end_flush();
-    $pdf_content = ob_get_clean();
+                .card-title {
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin-bottom: 15px;
+                }
 
-    // Configura las cabeceras para indicar que el contenido es un PDF
-    header('Content-Type: application/pdf');
+                .info-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 10px;
+                }
 
-    // Configura la cabecera Content-Disposition para que el navegador muestre el PDF en lugar de descargarlo
-    header('Content-Disposition: inline; filename="miarchivo.pdf"');
+                .info-table td, .info-table th {
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    text-align: left;
+                }
 
-    // Envia el contenido del PDF como respuesta
-    echo $pdf_content;
+                .info-table th {
+                    background-color: #138FCB;
+                    color: white;
+                }
+            </style>
+        </head>
+        <body>
+            <header class="imgPortada" style="text-align: center;">
+                <img src="' . __DIR__ . '/img/logo.jpeg" alt="Logo Castros Solucion" style="width:300px;">
+            </header>
+            <div class="container">
+            <br><br>
+                <div class="primeraSeccion">
+                    <p>Girardota, 05 de octubre 2023. <br>
+                    Cordial saludo. <br>
+                    Envío cotización.</p>
+                </div>
 
-    // Finaliza el script para evitar que se siga enviando contenido adicional
-    exit;
+                <div class="segundaSeccion">
+                    CLIENTE <br>
+                    <span class="cliente">' . $fila['organizacionEmpresas'] . '</span>
+                    <br><br><br>
+                    ALCANCE DE LA OBRA <br>
+                    <span class="alcanceObra">'.$fila['alcanceObra'].'</span>
+                    <br><br>
+                    <span>Somos una sociedad con una amplia experiencia en el mercado ofreciendo
+                    seguridad y calidad en cada una de nuestras obras. Para nosotros es un placer
+                    brindarles nuestros servicios con desempeño y responsabilidad.</span>
+                    <br><br><br><br>
+                    <span class="tituloNuestraResponsabilidad">Nuestra responsabilidad</span>
+                    <ul>
+                        <li>Personal calificado en cada una de las labores.</li>
+                        <li>Nuestro personal cuenta con su seguridad social y curso de altura.</li>
+                        <li>Suministro de equipos necesarios para la obra.</li>
+                        <li>Recolección de residuo generados en la obra..</li>
+                    </ul>
+                </div>
+                <br><br><br><br><br><br><br><br>
+                <footer>
+                    <span>CARRERA 17#7-121 LOCAL 101 EDIFICIO LAS ACACIAS GIRARDOTA <br>
+                    TELÉFONOS 3668720 - 3128949012
+                    </span>
+                </footer>
+                <br><br><br><br><br><br>
+            </div>
+            <div>
+                <header class="imgPortada" style="text-align: center;">
+                    <img src="' . __DIR__ . '/img/logo.jpeg" alt="Logo Castros Solucion" style="width:300px;">
+                </header><br>
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-title">Información Adicional</div>
+                        <table class="info-table">
+                            <tr>
+                                <td>Fecha cotización:</td>
+                                <td>' . $fila['fechaCotizacion'] . '</td>
+                            </tr>
+                            <tr>
+                                <td>Días:</td>
+                                <td>' . $fila['dias'] . '</td>
+                            </tr>
+                            <tr>
+                                <td>Mano de obra:</td>
+                                <td>' . $fila['manoObra'] . '</td>
+                            </tr>
+                            <tr>
+                                <td>Transporte:</td>
+                                <td>' . $fila['transporte'] . '</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div><br><br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 200px">Concepto</th>
+                            <th>M2 - Unidades</th>
+                            <th>Cantidad</th>
+                            <th>Valor total</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                    if ($sqlConceptos) {
+                        while ($row = $sqlConceptos->fetch_assoc()) {
+                            if ($row['material'] == '' && $row['metros_unidades'] == ''
+                                && $row['precio_unitario'] == '' && $row['cantidad'] == '' && $row['precio_total'] == '') {
+                                continue;
+                            }
+                            $html .= '
+                                <tr>
+                                    <td>' . $row["material"] . '</td>
+                                    <td>' . $row["metros_unidades"] . '</td>
+                                    <td>' . $row["cantidad"] . '</td>
+                                    <td>' . $row["totalPorTodo"] . '</td>
+                                </tr>';
+                        }
+                    }
+                    $html .= '<tr>
+                            <td colspan="4" style="text-align:right;font-weight:bold">Valor total Conceptos: <span style="color:red">'.$fila['totalPorTodoTablaInput'].'</span></td>
+                        </tr>
+                    </tbody>
+                </table><br><br>
+                <div class="firmaElectronica">
+                    <img src="'.  __DIR__ . '/img/firmaElectronica.jpeg" style="width:200px"><br>
+                    <span>JUAN FERNANDO CASTRO HERNANDEZ</span><br>
+                    <span>CONTRATISTA</span>
+                </div><br>
+                <footer>
+                    <span>CARRERA 17#7-121 LOCAL 101 EDIFICIO LAS ACACIAS GIRARDOTA <br>
+                    TELÉFONOS 3668720 - 3128949012
+                    </span>
+                </footer>
+            </div>
+        </body>
+        </html>';
+    } else {
+        echo '<script>alert("No se encontraron datos para crear el PDF");window.close();</script>';
+        exit;
+    }
 
+    return $html;
+}
+
+$mpdf = new \Mpdf\Mpdf();
+$mpdf->setFooter('{PAGENO}');
+
+$html = plantillaCotizacion();
+
+$mpdf->WriteHTML($html);
+$mpdf->Output('archivo.pdf', \Mpdf\Output\Destination::INLINE);
 ?>

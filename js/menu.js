@@ -24,5 +24,7 @@ function loadContent(file, documento = '') {
 function listarDocumentos(documento){
     event.preventDefault();
     loadContent(documento);
-    document.getElementById("activarFuncionCargarListado").click();
+    if(documento.includes("listar")){
+        document.getElementById("activarFuncionCargarListado").click();
+    }
 }
