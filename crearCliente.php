@@ -8,7 +8,7 @@
 
             if (isset($_GET['id'])) {
                 $id = $_GET['id'];
-                $sql = "SELECT * FROM cotizacion WHERE documentoId = $id"; // Reemplaza con tu consulta SQL
+                $sql = "SELECT documentoId, tipoContribuyente, regimen, nombreComercial, tipoDocumento, numeroDocumento, primerNombre, segundoNombre, primerApellido, segundoApellido, razonSocial, ciudad, direccion, telefonoCelular, correoElectronico FROM clientes WHERE documentoId = $id"; // Reemplaza con tu consulta SQL
                 $resultado = sqlQuerySelect($sql); // Utiliza tu función sqlQuerySelect
 
                 if ($resultado) {
@@ -26,99 +26,99 @@
                 <div class="card-header bg-primary text-white" style="font-weight:bold">
                     Información general
                 </div>
-                <div class="card-body">
+                <div class="card-body formulario">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo obligatorio">
                             <label for="documentoId">Id cliente</label>
-                            <input type="text" class="form-control campoFormulario" id="documentoId" name="documentoId" value="<?php if($esEdicion){echo $documentoId;}?>" readonly>
+                            <input type="text" class="form-control" id="documentoId" name="documentoId" value="<?php if($esEdicion){echo $id;}?>" readonly>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo obligatorio">
                             <label for="tipoContribuyente">Tipo de contribuyente</label>
-                            <select id="tipoContribuyente" class="form-control campoFormulario">
-                                <option value=""></option>
-                                <option value="Persona natural">Persona natural y asimiladas</option>
-                                <option value="Persona jurídica">Persona jurídica y asimiladas</option>
+                            <select id="tipoContribuyente" class="form-control">
+                                <option value="" <?php if (!isset($fila['tipoContribuyente']) || $fila['tipoContribuyente'] === "") { echo 'selected'; } ?>></option>
+                                <option value="Persona natural y asimiladas" <?php if (isset($fila['tipoContribuyente']) && $fila['tipoContribuyente'] === "Persona natural y asimiladas") { echo 'selected'; } ?>>Persona natural y asimiladas</option>
+                                <option value="Persona jurídica y asimiladas" <?php if (isset($fila['tipoContribuyente']) && $fila['tipoContribuyente'] === "Persona jurídica y asimiladas") { echo 'selected'; } ?>>Persona jurídica y asimiladas</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo obligatorio">
                             <label for="regimen">Régimen</label>
-                            <select id="regimen" class="form-control campoFormulario">
-                                <option value=""></option>
-                                <option value="No responsable de IVA">No responsable de IVA</option>
-                                <option value="Responsable del impuesto sobre las ventas - IVA">Responsable del impuesto sobre las ventas - IVA</option>
+                            <select id="regimen" class="form-control">
+                                <option value="" <?php if (!isset($fila['regimen']) || $fila['regimen'] === "") { echo 'selected'; } ?>></option>
+                                <option value="No responsable de IVA" <?php if (isset($fila['regimen']) && $fila['regimen'] === "No responsable de IVA") { echo 'selected'; } ?>>No responsable de IVA</option>
+                                <option value="Responsable del impuesto sobre las ventas - IVA" <?php if (isset($fila['regimen']) && $fila['regimen'] === "Responsable del impuesto sobre las ventas - IVA") { echo 'selected'; } ?>>Responsable del impuesto sobre las ventas - IVA</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo">
                             <label for="nombreComercial">Nombre comercial</label>
-                            <input type="text" id="nombreComercial" class="form-control campoFormulario">
+                            <input type="text" id="nombreComercial" class="form-control" value="<?php if($esEdicion){echo $fila['nombreComercial'];}?>">
                         </div>
                     </div><br>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-4 campo obligatorio">
                             <label for="tipoDocumento">Tipo de documento</label>
-                            <select id="tipoDocumento" class="form-control campoFormulario">
-                                <option value=""></option>
-                                <option value="Registro civil">Registro civil</option>
-                                <option value="Tarjeta de identidad">Tarjeta de identidad</option>
-                                <option value="Cédula de ciudadanía">Cédula de ciudadanía</option>
-                                <option value="Tarjeta de extranjería">Tarjeta de extranjería</option>
-                                <option value="Cédula extranjería">Cédula extranjería</option>
-                                <option value="NIT">NIT</option>
-                                <option value="Pasaporte">Pasaporte</option>
-                                <option value="Documento de identificacion extranjero">Documento de identificacion extranjero</option>
-                                <option value="NUIP">NUIP</option>
-                                <option value="PEP">PEP</option>
-                                <option value="NIT de otro pais">NIT de otro pais</option>
+                            <select id="tipoDocumento" class="form-control">
+                                <option value="" <?php if (!isset($fila['tipoDocumento']) || $fila['tipoDocumento'] === "") { echo 'selected'; } ?>></option>
+                                <option value="Registro civil" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "Registro civil") { echo 'selected'; } ?>>Registro civil</option>
+                                <option value="Tarjeta de identidad" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "Tarjeta de identidad") { echo 'selected'; } ?>>Tarjeta de identidad</option>
+                                <option value="Cédula de ciudadanía" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "Cédula de ciudadanía") { echo 'selected'; } ?>>Cédula de ciudadanía</option>
+                                <option value="Tarjeta de extranjería" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "Tarjeta de extranjería") { echo 'selected'; } ?>>Tarjeta de extranjería</option>
+                                <option value="Cédula extranjería" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "Cédula extranjería") { echo 'selected'; } ?>>Cédula extranjería</option>
+                                <option value="NIT" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "NIT") { echo 'selected'; } ?>>NIT</option>
+                                <option value="Pasaporte" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "Pasaporte") { echo 'selected'; } ?>>Pasaporte</option>
+                                <option value="Documento de identificación extranjero" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "Documento de identificación extranjero") { echo 'selected'; } ?>>Documento de identificación extranjero</option>
+                                <option value="NUIP" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "NUIP") { echo 'selected'; } ?>>NUIP</option>
+                                <option value="PEP" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "PEP") { echo 'selected'; } ?>>PEP</option>
+                                <option value="NIT de otro país" <?php if (isset($fila['tipoDocumento']) && $fila['tipoDocumento'] === "NIT de otro país") { echo 'selected'; } ?>>NIT de otro país</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo obligatorio">
                             <label for="numeroDocumento">Número de documento</label>
-                            <input type="text" id="numeroDocumento" class="form-control campoFormulario">
+                            <input type="text" id="numeroDocumento" class="form-control" value="<?php if($esEdicion){echo $fila['numeroDocumento'];}?>">
                         </div>
                     </div><br>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo">
                             <label for="primerNombre">Primer nombre</label>
-                            <input type="text" id="primerNombre" class="form-control campoFormulario">
+                            <input type="text" id="primerNombre" class="form-control" value="<?php if($esEdicion){echo $fila['primerNombre'];}?>">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo">
                             <label for="segundoNombre">Segundo nombre</label>
-                            <input type="text" id="segundoNombre" class="form-control campoFormulario">
+                            <input type="text" id="segundoNombre" class="form-control" value="<?php if($esEdicion){echo $fila['segundoNombre'];}?>">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo">
                             <label for="primerApellido">Primer apellido</label>
-                            <input type="text" id="primerApellido" class="form-control campoFormulario">
+                            <input type="text" id="primerApellido" class="form-control" value="<?php if($esEdicion){echo $fila['primerApellido'];}?>">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo">
                             <label for="segundoApellido">Segundo apellido</label>
-                            <input type="text" id="segundoApellido" class="form-control campoFormulario">
+                            <input type="text" id="segundoApellido" class="form-control" value="<?php if($esEdicion){echo $fila['segundoApellido'];}?>">
                         </div>
                     </div><br>
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-5 campo">
                             <label for="razonSocial">Razón social</label>
-                            <input type="text" id="razonSocial" class="form-control campoFormulario">
+                            <input type="text" id="razonSocial" class="form-control" value="<?php if($esEdicion){echo $fila['razonSocial'];}?>">
                         </div>
                     </div><br>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo obligatorio">
                             <label for="ciudad">Ciudad</label>
-                            <input type="text" id="ciudad" class="form-control campoFormulario">
+                            <input type="text" id="ciudad" class="form-control" value="<?php if($esEdicion){echo $fila['ciudad'];}?>">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 campo obligatorio">
                             <label for="direccion">Dirección</label>
-                            <input type="text" id="direccion" class="form-control campoFormulario">
+                            <input type="text" id="direccion" class="form-control" value="<?php if($esEdicion){echo $fila['direccion'];}?>">
                         </div>
-                        <div class="col-md-3">  
+                        <div class="col-md-3 campo obligatorio">  
                             <label for="telefonoCelular">Teléfono / Celular</label>
-                            <input type="text" id="telefonoCelular" class="form-control campoFormulario">
+                            <input type="text" id="telefonoCelular" class="form-control" value="<?php if($esEdicion){echo $fila['telefonoCelular'];}?>">
                         </div>
-                        <div class="col-md-3">  
+                        <div class="col-md-3 campo obligatorio">  
                             <label for="correoElectronico">Correo electrónico</label>
-                            <input type="text" id="correoElectronico" class="form-control campoFormulario">
+                            <input type="text" id="correoElectronico" class="form-control" value="<?php if($esEdicion){echo $fila['correoElectronico'];}?>">
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="validarFormulario('formCotizacion','<?php if(!$esEdicion){echo 'I-cliente';}else{echo 'U-cliente';}?>')">Enviar</button>
+                    <button type="button" class="btn btn-primary" onclick="<?php if($esEdicion){echo 'guardar(2)';}else{ echo 'guardar(1)';}?>">Enviar</button>
                 </div>
             </div>
         </form>

@@ -4,7 +4,7 @@
     include_once("functions.php");
     global $conn;
     conectarBaseDeDatos();
-    $response = '<contrato>';
+    $response = '<response>';
     $xmlData = file_get_contents('php://input');
     $xml = simplexml_load_string($xmlData);
     switch ($xml->accion) {
@@ -41,8 +41,22 @@
                 $response .= "<respuesta>OK</respuesta>";
             }
             break;
+        case 'I-user':
+            if(xmlInsertarDatos('clientes', $xml->param->idCampo, $xml->param->valor)){
+                $response .= "<respuesta>OK</respuesta>";
+            }else{  
+                $response .= "<respuesta>ERROR</respuesta>";
+            }
+            break;
+            case 'U-user':
+                if (xmlActualizarDatos('clientes', $xml->param->idCampo, $xml->param->valor, 'documentoId=' . $xml->param->valor[0])) {
+                    $response .= "<respuesta>OK</respuesta>";
+                } else {
+                    $response .= "<respuesta>ERROR</respuesta>";
+                }
+                break;
     }
     header('Content-Type: application/xml');
-    $response .= "</contrato>";
+    $response .= "</response>";
     echo $response;
 ?>

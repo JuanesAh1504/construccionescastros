@@ -11,23 +11,33 @@
                 $resultado = sqlQuerySelect($sql); // Utiliza tu función sqlQuerySelect
 
                 if ($resultado) {
-                    $fila = $resultado->fetch_assoc();
+                    $fila = array();
+                    while($fila = $resultado->fetch_assoc()){
+                        if($fila['material'] == '' && $fila['metros_unidades'] == '' && $fila['precio_unitario'] == '' && $fila['cantidad'] == '' && $fila['precio_total'] == ''){
+                            $fechaInicio = $fila['fechaCotizacion'];
+                            $fechaCotizacionFin = $fila['fechaCotizacionFin'];
+                            $cliente = $fila['organizacionEmpresas'];
+                            $alcanceObra = $fila['alcanceObra'];
+                            $totalNetoInput = $fila['totalNetoInput'];
+                            $totalIVAInput = $fila['totalIVAInput'];
+                            $totalRetefuenteTablaInput = $fila['totalRetefuenteTablaInput'];
+                            $totalPorTodoTablaInput = $fila['totalPorTodoTablaInput'];
+                            $dias = $fila['dias'];
+                            $manoObra = $fila['manoObra'];
+                            $porcentajeAdmin = $fila['porcentajeAdmin'];
+                            $porcentajeUtilidad = $fila['porcentajeUtilidad'];
+                            $alquilerEquipos = $fila['alquilerEquipos'];
+                            $transporte = $fila['transporte'];
+                            $elementosProteccion = $fila['elementosProteccion'];
+                            $Dotacion = $fila['Dotacion'];
+                            $Porcentaje1 = $fila['Porcentaje1'];
+                            $Porcentaje2 = $fila['Porcentaje2'];
+                            $Porcentaje3 = $fila['Porcentaje3'];
+                            $Porcentaje4 = $fila['Porcentaje4'];
+                            $valorTotalCotizacion = $fila['valorTotalCotizacion'];
+                        }
+                    }
                     $esEdicion = true;
-                    // Asigna los valores a las variables
-                    $documentoId = $fila['documentoId'];
-                    $fechaCotizacion = $fila['fechaCotizacion'];
-                    $organizacionEmpresas = $fila['organizacionEmpresas'];
-                    $alcanceObra = $fila['alcanceObra'];
-                    $dias = $fila['dias'];
-                    $iva = $fila['iva'];
-                    $retefuente = $fila['retefuente'];
-                    $manoObra = $fila['manoObra'];
-                    $porcentajeAdmin = $fila['porcentajeAdmin'];
-                    $porcentajeUtilidad = $fila['porcentajeUtilidad'];
-                    $alquilerEquipos = $fila['alquilerEquipos'];
-                    $transporte = $fila['transporte'];
-                    $elementosProteccion = $fila['elementosProteccion'];
-                    $Dotacion = $fila['Dotacion'];
                 }
             }
         ?> 
@@ -43,15 +53,15 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label for="">Id documento</label>
-                            <input type="text" class="form-control obligatorio" id="documentoId" name="documentoId" value="<?php if($esEdicion){echo $documentoId;}?>" readonly>
+                            <input type="text" class="form-control obligatorio" id="documentoId" name="documentoId" value="<?php if($esEdicion){echo $id;}?>" readonly>
                         </div>
                         <div class="col-md-3 campo">
                             <label for="fechaCotizacion">Fecha inicio</label>
-                            <input type="date" class="form-control campoFormulario obligatorio" id="fechaCotizacion" onchange="calcularDiferenciaEnDias();" name="fechaCotizacion" value="<?php if($esEdicion){echo $fechaCotizacion;}?>">
+                            <input type="date" class="form-control campoFormulario obligatorio" id="fechaCotizacion" onchange="calcularDiferenciaEnDias();" name="fechaCotizacion" value="<?php if($esEdicion){echo $fechaInicio; }?>">
                         </div>
                         <div class="col-md-3 campo">
                             <label for="fechaCotizacion">Fecha fin</label>
-                            <input type="date" class="form-control campoFormulario obligatorio" id="fechaCotizacionFin" onchange="calcularDiferenciaEnDias();" value="<?php if($esEdicion){echo $fechaCotizacion;}?>">
+                            <input type="date" class="form-control campoFormulario obligatorio" id="fechaCotizacionFin" onchange="calcularDiferenciaEnDias();" value="<?php if($esEdicion){echo $fechaCotizacionFin;}?>">
                         </div>
                     </div>
                     <input type="hidden" class="campoFormulario" value="1" id="rowCount">
@@ -63,8 +73,10 @@
                                 <?php 
                                     $sqlClientes = "SELECT primerNombre, segundoNombre, primerApellido, segundoApellido, razonSocial, numeroDocumento FROM clientes"; // Reemplaza con tu consulta SQL
                                     $resultado = sqlQuerySelect($sqlClientes); // Utiliza tu función sqlQuerySelect
-                                    for ($i = 0; $row = $resultado->fetch_assoc(); $i++) {
+
+                                    while ($row = $resultado->fetch_assoc()) {
                                         $nombreCompleto = '';
+
                                         if (!empty($row['primerNombre'])) {
                                             $nombreCompleto .= $row['primerNombre'];
                                         }
@@ -77,14 +89,17 @@
                                         if (!empty($row['segundoApellido'])) {
                                             $nombreCompleto .= (!empty($nombreCompleto) ? ' ' : '') . $row['segundoApellido'];
                                         }
+
                                         // Si todos los campos de nombre y apellido están vacíos, utilizar la razón social
                                         if (empty($nombreCompleto)) {
                                             $nombreCompleto = $row['razonSocial'];
                                         }
-                                        echo '<option value="'.$row['numeroDocumento'].'">'.$nombreCompleto.'</option>';
+                                        $selected = ($cliente == $row['numeroDocumento']) ? 'selected' : '';
+                                        echo '<option value="'.$row['numeroDocumento'].'" '.$selected.'>'.$nombreCompleto.'</option>';
                                     }
                                 ?>
                             </select>
+
                         </div>
                         <div class="form-group col-6 campo">
                             <label for="alcanceObra">Alcance de obra</label>
@@ -111,25 +126,32 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if($esEdicion){
-                                                while ($row = $resultado->fetch_assoc()) {
-                                                if($row['material'] == '' && $row['metros_unidades'] == ''
-                                                && $row['precio_unitario'] == '' && $row['cantidad'] == '' && $row['precio_total'] == ''){
-                                                    continue;
+                                        <?php 
+                                            if($esEdicion){
+                                                $sql = "SELECT * FROM cotizacion WHERE documentoId = $id"; // Reemplaza con tu consulta SQL
+                                                $resultado = sqlQuerySelect($sql); // Utiliza tu función sqlQuerySelect
+                                                if($resultado){
+                                                    while ($fila = $resultado->fetch_assoc()) {
+                                                        if($fila['material'] == '' && $fila['metros_unidades'] == ''
+                                                        && $fila['precio_unitario'] == '' && $fila['cantidad'] == '' && $fila['precio_total'] == ''){
+                                                            continue;
+                                                        }
+                                                        echo '<tr>';
+                                                        echo '<td style="width:380px"><input type="text" class="inputPersonalizado campoFormulario obligatorio" id="materiales" value="'.$fila['material'].'"></td>';
+                                                        echo '<td><input type="text" class="inputPersonalizado campoFormulario" id="metrosUnidades" value="'.$fila['metros_unidades'].'"></td>';
+                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario obligatorio" id="precioUnitario" onchange="formatoPesoColombiano(this);calcularFormula(\'cantidad\', \'precioUnitario\', \'precioTotal\');calcularIva(\'precioTotal\', \'iva\', \'totalIva\');calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\');valorTotal([\'#precioTotal\', \'#totalIva\', \'#totalRetefuente\'], \'totalPorTodo\');calcularCamposAdicionales();sumarPrecioTotal();" value="'.$fila['precio_unitario'].'"></td>';
+                                                        echo '<td><input style="width:70px" type="text" class="inputPersonalizado campoFormulario campoNumero obligatorio" id="cantidad" value="1" onchange="calcularFormula(\'precioUnitario\', \'cantidad\', \'precioTotal\');calcularIva(\'precioTotal\', \'iva\', \'totalIva\');calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\');valorTotal([\'#precioTotal\', \'#totalIva\', \'#totalRetefuente\'], \'totalPorTodo\');sumarPrecioTotal();calcularCamposAdicionales()" value="'.$fila['cantidad'].'"></td>';
+                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="precioTotal" disabled value="'.$fila['precio_total'].'"></td>';
+                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="iva" onchange="calcularIva(\'precioTotal\', \'iva\', \'totalIva\');valorTotal([\'#precioTotal\', \'#totalIva\', \'#totalRetefuente\'], \'totalPorTodo\');sumarPrecioTotal();calcularCamposAdicionales()" value="'.$fila['iva'].'"></td>';
+                                                        echo '<td><input style="width:110px" type="text" id="totalIva" class="inputPersonalizado campoFormulario" disabled value="'.$fila['totalIva'].'"></td>';
+                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="retefuente" onchange="calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\');valorTotal([\'#precioTotal\', \'#totalIva\', \'#totalRetefuente\'], \'totalPorTodo\');sumarPrecioTotal();calcularCamposAdicionales()" value="'.$fila['retefuente'].'"></td>';
+                                                        echo '<td><input style="width:110px" type="text" id="totalRetefuente" class="inputPersonalizado campoFormulario" disabled value="'.$fila['totalRetefuente'].'"></td>';
+                                                        echo '<td><input style="width:110px" type="text" id="totalPorTodo" class="inputPersonalizado campoFormulario" onchange="" disabled value="'.$fila['totalPorTodo'].'"></td>';        
+                                                        echo '<td><input style="width:110px" type="text" id="totalIncluidoOtrosPrecios" class="inputPersonalizado campoFormulario" onchange="" disabled value="'.$fila['totalValores'].'"></td>';
+                                                        echo '</tr>';
+        
+                                                    }
                                                 }
-                                                echo '<tr>';
-                                                echo '<td style="width:380px"><input type="text" class="inputPersonalizado campoFormulario" id="materiales"></td>';
-                                                echo '<td><input type="text" class="inputPersonalizado campoFormulario" id="metrosUnidades"></td>';
-                                                echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="precioUnitario" onchange="formatoPesoColombiano(this);calcularFormula(\'cantidad\', \'precioUnitario\', \'precioTotal\');calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\')"></td>';
-                                                echo '<td><input style="width:70px" type="text" class="inputPersonalizado campoFormulario campoNumero" id="cantidad" value="1" onchange="calcularFormula(\'precioUnitario\', \'cantidad\', \'precioTotal\');calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\')"></td>';
-                                                echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="precioTotal" disabled></td>';
-                                                echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="iva" onchange="calcularIva(\'precioTotal\', \'iva\', \'totalIva\')"></td>';
-                                                echo '<td><input style="width:110px" type="text" id="totalIva" class="inputPersonalizado campoFormulario" disabled></td>';
-                                                echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="retefuente" onchange="calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\')"></td>';
-                                                echo '<td><input style="width:110px" type="text" id="totalRetefuente" class="inputPersonalizado campoFormulario" disabled></td>';
-                                                echo '<td><input style="width:110px" type="text" id="totalPorTodo" class="inputPersonalizado campoFormulario" onchange="formatoPesoColombiano(this);calcularFormula(\'cantidad\', \'precioUnitario\', \'precioTotal\')" disabled></td>';
-                                                echo '</tr>';
-                                            }
                                         }else{ ?>
                                                 <tr>
                                                     <td style="width:380px"><input type="text" class="inputPersonalizado campoFormulario obligatorio" id="materiales"></td>
@@ -215,19 +237,19 @@
                         </div>
                         <div class="form-group col-md-1 campo">
                             <label for="Porcentaje1">P1</label>
-                            <input type="text" style="text-align:center" class="form-control campoFormulario" id="Porcentaje1" value="<?php if($esEdicion){echo $Dotacion;}?>">
+                            <input type="text" style="text-align:center" class="form-control campoFormulario" id="Porcentaje1" value="<?php if($esEdicion){echo $Porcentaje1;}?>">
                         </div>
                         <div class="form-group col-md-1 campo">
                             <label for="Porcentaje2">P2</label>
-                            <input type="text" style="text-align:center" class="form-control campoFormulario" id="Porcentaje2" value="<?php if($esEdicion){echo $Dotacion;}?>">
+                            <input type="text" style="text-align:center" class="form-control campoFormulario" id="Porcentaje2" value="<?php if($esEdicion){echo $Porcentaje2;}?>">
                         </div>
                         <div class="form-group col-md-1 campo">
                             <label for="Porcentaje3">P3</label>
-                            <input type="text" style="text-align:center" class="form-control campoFormulario" id="Porcentaje3" value="<?php if($esEdicion){echo $Dotacion;}?>">
+                            <input type="text" style="text-align:center" class="form-control campoFormulario" id="Porcentaje3" value="<?php if($esEdicion){echo $Porcentaje3;}?>">
                         </div>
                         <div class="form-group col-md-1 campo">
                             <label for="Porcentaje4">P4</label>
-                            <input type="text" style="text-align:center" class="form-control campoFormulario" id="Porcentaje4" value="<?php if($esEdicion){echo $Dotacion;}?>">
+                            <input type="text" style="text-align:center" class="form-control campoFormulario" id="Porcentaje4" value="<?php if($esEdicion){echo $Porcentaje4;}?>">
                         </div>
                     </div><br>
                     <div class="row">

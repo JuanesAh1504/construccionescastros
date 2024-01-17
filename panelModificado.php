@@ -27,11 +27,13 @@
 			<main class="content">
                 <div id="workspace"></div>
                 <div id="error-container"></div>   
+				<div id="errores-container"></div>
                 <div class="respuesta"></div>
 				<script src="js/ajax.js"></script>
                 <script src="js/menu.js"></script>
                 <script src="js/functions.js"></script>
                 <script src="js/campos.js"></script>
+                <script src="js/botones.js"></script>
                 <script src="js/jquery-3.7.1.min.js"></script>
                 <script src="js/validarDatos.js"></script>
                 <script src="js/envioDatos.js"></script>

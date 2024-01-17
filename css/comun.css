@@ -181,3 +181,21 @@ a{
         width: 90%;
     }
 }
+
+#errores-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 10px;
+    max-width: 100%; /* Asegurar que no se desborde del ancho de la pantalla */
+    box-sizing: border-box; /* Incluir padding en el ancho total */
+}
+
+.mensaje-error {
+    margin-bottom: 14px;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    height: 34px;
+}
+

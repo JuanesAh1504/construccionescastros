@@ -39,6 +39,47 @@ function validarFormulario(idFormulario, accion) {
   enviarDatosLogin(idFormulario);
 }
 
+let huboError = false;
+function validarCampos(){
+    huboError = false;
+    let div = $('.formulario');
+    let campos = $('.obligatorio', div);   
+    for (let i = 0; i < campos.length; i++) {
+        let inputCampo =  $(campos[i]).find('input, textarea, select');
+        let valorCampo = $(inputCampo).val();
+        let etiquetaCampo = $(inputCampo).closest('.obligatorio').find('label').text();
+
+        if (valorCampo == "") {
+            showAlerta("El campo <strong>" + etiquetaCampo + "</strong> está vacío.", 1);
+            huboError = true;
+        }
+    }
+    return huboError;
+}
+
+function showAlerta(mensaje, tipo){
+  let color;
+    if (tipo == "1") {
+        color = "#f00";
+    } else if (tipo == "2") {
+        color = "#00a616";
+    } else if (tipo == "3") {
+        color = "#fbff00";
+    }
+    let errorElement = $('<div class="mensaje-error"></div>').html(mensaje);
+    $(errorElement).css('background-color', color);
+    $('#errores-container').prepend(errorElement);
+    $('#errores-container').css('display', 'block');
+    errorElement.hide().appendTo('#errores-container').fadeIn();
+    let anchoTexto = $(errorElement).width();
+    errorElement.width(anchoTexto);
+    setTimeout(function () {
+        errorElement.fadeOut(function () {
+            $(this).remove();
+        });
+    }, 9000);
+}
+
 function mostrarAlertas(alertas, tipoAlerta) {
     var errorContainer = document.getElementById("error-container");
     errorContainer.innerHTML = '';

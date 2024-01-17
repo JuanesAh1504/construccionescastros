@@ -41,31 +41,66 @@
             return false; // Datos no válidos
         }
     }
+
+    function xmlInsertarDatos($tabla, $idCampos, $valores) {
+        if (count($idCampos) !== count($valores)) {
+            return false;
+        }
     
-    /* // Obtener el valor del input desde la solicitud GET
-    $valorInput = $_GET['valorInput'];
-
-    // Conectar a la base de datos
-    $conn = conectarBaseDeDatos();
-
-    // Consulta a la base de datos para obtener resultados que coincidan con el valor del input
-    $sql = "SELECT razonSocial FROM clientes WHERE razonSocial LIKE '%$valorInput%'";
-    $result = $conn->query($sql);
-
-    // Crear un array para almacenar los resultados
-    $data = array();
-
-    // Obtener los resultados y almacenarlos en el array
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $data[] = $row['razonSocial'];
+        $idCamposArray = json_decode(json_encode($idCampos), true);
+        $valoresArray = json_decode(json_encode($valores), true);
+    
+        foreach ($valoresArray as &$valor) {
+            if (is_array($valor)) {
+                $valor = "''";
+            } else {
+                $valor = "'" . $valor . "'";
+            }
+        }
+    
+        $sql = "INSERT INTO " . $tabla . " (";
+        $sql .= implode(", ", $idCamposArray);
+        $sql .= ") VALUES (";
+        $sql .= implode(", ", $valoresArray);
+        $sql .= ")";
+    
+        // Pasa el SQL a la función sqlQuery
+        $sqlQuery = sqlInsertUpdate($sql);
+    
+        if ($sqlQuery > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
-
-    // Devolver los resultados como JSON
-    header('Content-Type: application/json');
-    echo json_encode($data);
-
-    // Cerrar la conexión a la base de datos
-    cerrarConexion($conn); */
+    
+    
+    
+    function xmlActualizarDatos($tabla, $idCampos, $valores, $condicion) {
+        if (count($idCampos) !== count($valores)) {
+            return false;
+        }
+        $idCamposArray = json_decode(json_encode($idCampos), true);
+        $valoresArray = json_decode(json_encode($valores), true);
+        foreach ($valoresArray as &$valor) {
+            if (is_array($valor)) {
+                $valor = "";
+            }
+        }
+    
+        $updatePairs = array();
+        for ($i = 0; $i < count($idCamposArray); $i++) {
+            $updatePairs[] = $idCamposArray[$i] . "='" . $valoresArray[$i] . "'";
+        }
+    
+        $sql = "UPDATE " . $tabla . " SET " . implode(", ", $updatePairs) . " WHERE " . $condicion;
+    
+        // Pasa el SQL y los parámetros a la función sqlQuery
+        $sqlQuery = sqlInsertUpdate($sql);
+        if($sqlQuery){
+            return true;
+        }else{
+            return false;
+        }
+    }    
 ?>
