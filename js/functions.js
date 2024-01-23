@@ -1,7 +1,7 @@
 document.write('<script src="js/jquery-3.7.1.min.js"></script>');
 
 function agregarFila() {
-    var rowCount = parseInt($("#rowCount").val());
+    var rowCount = $("#dynamic-table tbody tr").length - 1;
     var newRow = $("<tr>");
 
     newRow.append($("<td><input type='text' class='inputPersonalizado campoFormulario' id='materiales_" + rowCount + "'></td>"));
@@ -30,9 +30,6 @@ function agregarFila() {
     // Agregar la nueva fila a la tabla
     $("#dynamic-table tbody").append(newRow);
     
-    // Incrementar el contador de filas
-    rowCount++;
-    $("#rowCount").val(rowCount);
 }
 
 
@@ -46,6 +43,27 @@ function eliminarFila(){
     setTimeout(() => {
         sumarPrecioTotal();
     }, 50);
+}
+
+function agregarCeldaCotizacion(){
+    var firstRow = $("#dynamic-table tbody tr:first").clone();
+    var rowCount = 
+    $(firstRow).find('input').each(function () {
+        var currentId = $(this).attr('id');
+        if (currentId) {
+            var newId = currentId + "_" + rowCount;
+            $(this).attr('id', newId);
+        }
+        if ($(this).is('input') && $(this).attr('onchange')) {
+            var originalOnchange = $(this).attr('onchange');
+            $(this).attr('onchange', originalOnchange + '_' + rowCount);
+        }
+        if ($(this).is('input')) {
+            // Limpiar el valor de los input de texto
+            $(this).val('');
+        }
+    });
+    $("#dynamic-table tbody").append(firstRow);
 }
 
 function sumarPrecioTotal() {
@@ -398,38 +416,43 @@ function cargarCotizaciones() {
 }
 
 function obtenerInfoCotizacion(cotizacionID) {
-    let data = {
-        cotizacionID: cotizacionID,
-        accion: "obtenerInfoCotizacionContabilidad"
-    };
-
-    $.ajax({
-        url: "search.php", // Archivo PHP que maneja la consulta a la base de datos
-        method: "POST",
-        data: data,
-        dataType: "text", // Especificar el tipo de datos que esperas recibir
-        success: function(xmlResponse, status, xhr) {
-            var detalles = $(xmlResponse).find('detalle');
+        let data = {
+            cotizacionID: cotizacionID,
+            accion: "obtenerInfoCotizacionContabilidad"
+        };
     
-            // Verificar si hay detalles
-            if (detalles.length > 0) {
-                obtenerDetallesCotizacionContabilidad(detalles);
-            } else {
-                // Manejar el caso en que no se encontraron detalles
-                $("#infoCotizacion").html("No se encontraron detalles para la cotización seleccionada.");
+        $.ajax({
+            url: "search.php", // Archivo PHP que maneja la consulta a la base de datos
+            method: "POST",
+            data: data,
+            dataType: "text", // Especificar el tipo de datos que esperas recibir
+            success: function(xmlResponse, status, xhr) {
+                var detalles = $(xmlResponse).find('detalle');
+        
+                // Verificar si hay detalles
+                if (detalles.length > 0) {
+                    obtenerDetallesCotizacionContabilidad(detalles);
+                } else {
+                    // Manejar el caso en que no se encontraron detalles
+                    $("#infoCotizacion").html("No se encontraron detalles para la cotización seleccionada.");
+                }
+    
+                // Puedes acceder a detalles adicionales del objeto xhr, por ejemplo, los encabezados de la respuesta
+                var encabezados = xhr.getAllResponseHeaders();
+                console.log("Encabezados de la respuesta:", encabezados);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud AJAX: ", textStatus, errorThrown);
+                console.log("Detalles adicionales:", jqXHR.responseText);
             }
+        });
+    }
 
-            // Puedes acceder a detalles adicionales del objeto xhr, por ejemplo, los encabezados de la respuesta
-            var encabezados = xhr.getAllResponseHeaders();
-            console.log("Encabezados de la respuesta:", encabezados);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error("Error en la solicitud AJAX: ", textStatus, errorThrown);
-            console.log("Detalles adicionales:", jqXHR.responseText);
-        }
-    });
-}
 let valorPorcentaje1Original = 0;
+let valorPorcentaje2Original = 0;
+let valorPorcentaje3Original = 0;
+let valorPorcentaje4Original = 0;
+
 function obtenerDetallesCotizacionContabilidad(detalles){
     let html = '';
     let documentoId = detalles.find('idCotizacion').text();
@@ -558,7 +581,7 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
                                         <input type="hidden" id="numeralPorcentaje" class="campoFormulario" value="1">\
                                         <input type="hidden" class="campoFormulario obligatorio" value="'+porcentaje1+'" id="porcentaje">\
                                         <input type="hidden" class="campoFormulario obligatorio" value="'+documentoId+'" id="idContrato">\
-                                        <input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante1\');">\
+                                        <input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante1\', \'valorPorcentaje1Original\');">\
                                     </div>\
                                 </div>\
                             </td>\
@@ -640,7 +663,7 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
                                             <input type="hidden" id="numeralPorcentaje" class="campoFormulario" value="2">\
                                             <input type="hidden" class="campoFormulario obligatorio" value="'+porcentaje2+'" id="porcentaje">\
                                             <input type="hidden" class="campoFormulario obligatorio" value="'+documentoId+'" id="idContrato">\
-                                            <input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante2\');">\
+                                            <input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante2\', valorPorcentaje2Original);">\
                                         </div>\
                                     </div>\
                                 </td>\
@@ -651,8 +674,12 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
                     <button class="btn btn-success" onclick="guardarGastos(\'#tablaPorcentaje2\', \'#totalRestante2\')">Guardar</button>\                </div>\
             </div>';
         html += '<table class="table table-responsive tablaContabilidadContrato">\
-    <thead>\
-      <tr>\
+        <thead>\
+        <tr>\
+        <th colspan="11" class="card-header">DISCRIMINACIÓN DE PRECIOS '+alcanceObra+'</th>\
+        </tr>\
+        <tr>\
+        <th></th>\
         <th>Fecha</th>\
         <th>Porcentaje</th>\
         <th>Valor pagado</th>\
@@ -666,7 +693,10 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
       </tr>\
     </thead>\
     <tbody>\
-      <tr>\
+        <tr>\
+        <td rowspan=2>\
+        <button onclick="openModal(\'modalP3\')" class="btn btn-primary btn-sm" ' + (botonModalPago3 ? 'disabled' : '') + '>Abrir Modal</button>\
+        </td>\
         <td rowspan=2>'+fechaCotizacion+'</td>\
         <td rowspan=2>'+porcentaje3+'</td>\
         <td rowspan=2>'+valorPago3+'</td>\
@@ -691,7 +721,40 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
         <td colspan="10" id="totalRestante3"></td>\
     </tr>\
     </tbody>\
-  </table>\<table class="table table-responsive tablaContabilidadContrato">\
+  </table>';
+  html += '<div id="modalP3" class="modal" onclick="closeModal(\'modalP3\');">\
+                <div class="modal-content" style="width: 38%;" onclick="event.stopPropagation();">\
+                    <span class="close" onclick="closeModal(\'modalP3\');">&times;</span>\
+                    <div style="text-align: center;">\
+                        <b><h3 class="text-dark">Agregar gastos</h3></b>\
+                    </div>\
+                    <button class="btn btn-primary" onclick="campoAgregarFila(\'#tablaPorcentaje3\')">+</button>\
+                    <table id="tablaPorcentaje3">\
+                        <tbody>\
+                            <tr>\
+                                <td>\
+                                    <div class="row">\
+                                        <div class="col-lg-6">\
+                                            <label for="producto"><b>Producto</b></label>\
+                                            <input type="text" class="form-control campoFormulario obligatorio" id="producto">\
+                                        </div>\
+                                        <div class="col-lg-6">\
+                                            <label for="precio"><b>Precio</b></label>\
+                                            <input type="hidden" id="rowCountModal" class="campoFormulario" value="1">\
+                                            <input type="hidden" id="numeralPorcentaje" class="campoFormulario" value="3">\
+                                            <input type="hidden" class="campoFormulario obligatorio" value="'+porcentaje3+'" id="porcentaje">\
+                                            <input type="hidden" class="campoFormulario obligatorio" value="'+documentoId+'" id="idContrato">\
+                                            <input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante3\', valorPorcentaje3Original);">\
+                                        </div>\
+                                    </div>\
+                                </td>\
+                            </tr>\
+                        </tbody>\
+                    </table>\
+                    <br>\
+                    <button class="btn btn-success" onclick="guardarGastos(\'#tablaPorcentaje3\', \'#totalRestante3\')">Guardar</button>\                </div>\
+            </div>';
+  html += '<table class="table table-responsive tablaContabilidadContrato">\
   <thead>\
     <tr>\
       <th>Fecha</th>\
@@ -740,7 +803,14 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
     discriminarPorPrecios(valorPago3, arrayValoresAdicionales, 3);
     discriminarPorPrecios(valorPago4, arrayValoresAdicionales, 4);
     let valorTotalPorcentaje1 = $('#totalRestante1').text().match(/\d+(\.\d+)?/);
+    let valorTotalPorcentaje2 = $('#totalRestante2').text().match(/\d+(\.\d+)?/);
+    let valorTotalPorcentaje3 = $('#totalRestante3').text().match(/\d+(\.\d+)?/);
+    let valorTotalPorcentaje4 = $('#totalRestante4').text().match(/\d+(\.\d+)?/);
+
     valorPorcentaje1Original = valorTotalPorcentaje1 ? valorTotalPorcentaje1[0] : null;
+    valorPorcentaje2Original = valorTotalPorcentaje2 ? valorTotalPorcentaje2[0] : null;
+    valorPorcentaje3Original = valorTotalPorcentaje3 ? valorTotalPorcentaje3[0] : null;
+    valorPorcentaje4Original = valorTotalPorcentaje4 ? valorTotalPorcentaje4[0] : null;
 }
 function openModal(idModal) {
     var modal = document.getElementById(idModal);
@@ -752,7 +822,7 @@ function closeModal(idModal) {
     modal.style.display = 'none';
 }
 
-function calcularGastosContabilidad(campo, totalAntesDe) {
+function calcularGastosContabilidad(campo, totalAntesDe, porcentajeOriginal) {
     let valorTotalAntesDe = $('#' + totalAntesDe).text();
     let soloNumeros = valorTotalAntesDe.match(/\d+(\.\d+)?/);
     let numeroExtraido = soloNumeros ? soloNumeros[0] : null;
@@ -767,7 +837,7 @@ function calcularGastosContabilidad(campo, totalAntesDe) {
     let tabla = $(campo).closest('table');
     if (tabla.find('tbody tr').length === 1 && valorCampo === 0) {
         // Restaurar al valor anterior
-        $('#' + totalAntesDe).html('<h3>Total restante:</h3>' + formatoPesoColombianoReturn(valorPorcentaje1Original));
+        $('#' + totalAntesDe).html('<h3>Total restante:</h3>' + formatoPesoColombianoReturn(porcentajeOriginal));
     } else {
         if (deleteFila) {
             $('#' + totalAntesDe).html('<h3>Total restante:</h3>' + formatoPesoColombianoReturn(numeroExtraido + valorCampo));

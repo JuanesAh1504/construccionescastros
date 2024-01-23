@@ -41,6 +41,34 @@
                 $response .= "<respuesta>OK</respuesta>";
             }
             break;
+        case 'obtenerInfoContabilidad':
+            $sql = "SELECT c.*, ct.* FROM cotizacion c INNER JOIN contratosgenerados ct ON ct.numerocontrato = " . $xml->param->idCotizacion . " WHERE c.documentoId = " . $xml->param->idCotizacion;
+            $result = sqlQuerySelect($sql);
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    if($row['material'] == ''){
+                        $response .= '<idCotizacion>'.$row['documentoId'].'</idCotizacion>';
+                        $response .= '<fechaCotizacion>'.$row['fechaCotizacion'].'</fechaCotizacion>';
+                        $response .= '<alcanceObra>'.$row['alcanceObra'].'</alcanceObra>';
+                        $response .= '<porcentaje1>'.$row['Porcentaje1'].'</porcentaje1>';
+                        $response .= '<valorPago1>'.$row['valorPago1'].'</valorPago1>';
+                        $response .= '<porcentaje2>'.$row['Porcentaje2'].'</porcentaje2>';
+                        $response .= '<valorPago2>'.$row['valorPago2'].'</valorPago2>';
+                        $response .= '<porcentaje3>'.$row['Porcentaje3'].'</porcentaje3>';
+                        $response .= '<valorPago3>'.$row['valorPago3'].'</valorPago3>';
+                        $response .= '<porcentaje4>'.$row['Porcentaje4'].'</porcentaje4>';
+                        $response .= '<valorPago4>'.$row['valorPago4'].'</valorPago4>';
+                        $response .= '<manoObra>'.$row['manoObra'].'</manoObra>';
+                        $response .= '<porcentajeAdmin>'.$row['porcentajeAdmin'].'</porcentajeAdmin>';
+                        $response .= '<porcentajeUtilidad>'.$row['porcentajeUtilidad'].'</porcentajeUtilidad>';
+                        $response .= '<alquilerEquipos>'.$row['alquilerEquipos'].'</alquilerEquipos>';
+                        $response .= '<transporte>'.$row['transporte'].'</transporte>'; 
+                        $response .= '<elementosProteccion>'.$row['elementosProteccion'].'</elementosProteccion>';
+                        $response .= '<Dotacion>'.$row['Dotacion'].'</Dotacion>';
+                    }
+                }
+            }
+            break;
         case 'I-user':
             if(xmlInsertarDatos('clientes', $xml->param->idCampo, $xml->param->valor)){
                 $response .= "<respuesta>OK</respuesta>";

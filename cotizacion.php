@@ -128,30 +128,137 @@
                                     <tbody>
                                         <?php 
                                             if($esEdicion){
-                                                $sql = "SELECT * FROM cotizacion WHERE documentoId = $id"; // Reemplaza con tu consulta SQL
-                                                $resultado = sqlQuerySelect($sql); // Utiliza tu función sqlQuerySelect
-                                                if($resultado){
+                                                $sql = "SELECT * FROM cotizacion WHERE documentoId = $id";
+                                                $resultado = sqlQuerySelect($sql);
+
+                                                if ($resultado) {
+                                                    $rowCount = 0; // Inicializar el contador de filas
+
                                                     while ($fila = $resultado->fetch_assoc()) {
-                                                        if($fila['material'] == '' && $fila['metros_unidades'] == ''
-                                                        && $fila['precio_unitario'] == '' && $fila['cantidad'] == '' && $fila['precio_total'] == ''){
+                                                        if ($fila['material'] == '' && $fila['metros_unidades'] == '' &&
+                                                            $fila['precio_unitario'] == '' && $fila['cantidad'] == '' && $fila['precio_total'] == '') {
                                                             continue;
                                                         }
+
                                                         echo '<tr>';
-                                                        echo '<td style="width:380px"><input type="text" class="inputPersonalizado campoFormulario obligatorio" id="materiales" value="'.$fila['material'].'"></td>';
-                                                        echo '<td><input type="text" class="inputPersonalizado campoFormulario" id="metrosUnidades" value="'.$fila['metros_unidades'].'"></td>';
-                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario obligatorio" id="precioUnitario" onchange="formatoPesoColombiano(this);calcularFormula(\'cantidad\', \'precioUnitario\', \'precioTotal\');calcularIva(\'precioTotal\', \'iva\', \'totalIva\');calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\');valorTotal([\'#precioTotal\', \'#totalIva\', \'#totalRetefuente\'], \'totalPorTodo\');calcularCamposAdicionales();sumarPrecioTotal();" value="'.$fila['precio_unitario'].'"></td>';
-                                                        echo '<td><input style="width:70px" type="text" class="inputPersonalizado campoFormulario campoNumero obligatorio" id="cantidad" value="1" onchange="calcularFormula(\'precioUnitario\', \'cantidad\', \'precioTotal\');calcularIva(\'precioTotal\', \'iva\', \'totalIva\');calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\');valorTotal([\'#precioTotal\', \'#totalIva\', \'#totalRetefuente\'], \'totalPorTodo\');sumarPrecioTotal();calcularCamposAdicionales()" value="'.$fila['cantidad'].'"></td>';
-                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="precioTotal" disabled value="'.$fila['precio_total'].'"></td>';
-                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="iva" onchange="calcularIva(\'precioTotal\', \'iva\', \'totalIva\');valorTotal([\'#precioTotal\', \'#totalIva\', \'#totalRetefuente\'], \'totalPorTodo\');sumarPrecioTotal();calcularCamposAdicionales()" value="'.$fila['iva'].'"></td>';
-                                                        echo '<td><input style="width:110px" type="text" id="totalIva" class="inputPersonalizado campoFormulario" disabled value="'.$fila['totalIva'].'"></td>';
-                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="retefuente" onchange="calcularRetefuente(\'precioTotal\', \'retefuente\', \'totalRetefuente\');valorTotal([\'#precioTotal\', \'#totalIva\', \'#totalRetefuente\'], \'totalPorTodo\');sumarPrecioTotal();calcularCamposAdicionales()" value="'.$fila['retefuente'].'"></td>';
-                                                        echo '<td><input style="width:110px" type="text" id="totalRetefuente" class="inputPersonalizado campoFormulario" disabled value="'.$fila['totalRetefuente'].'"></td>';
-                                                        echo '<td><input style="width:110px" type="text" id="totalPorTodo" class="inputPersonalizado campoFormulario" onchange="" disabled value="'.$fila['totalPorTodo'].'"></td>';        
-                                                        echo '<td><input style="width:110px" type="text" id="totalIncluidoOtrosPrecios" class="inputPersonalizado campoFormulario" onchange="" disabled value="'.$fila['totalValores'].'"></td>';
+                                                        echo '<td style="width:380px"><input type="text" class="inputPersonalizado campoFormulario obligatorio" id="materiales';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" value="' . $fila['material'] . '"></td>';
+                                                        echo '<td><input type="text" class="inputPersonalizado campoFormulario" id="metrosUnidades';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" value="' . $fila['metros_unidades'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario obligatorio" id="precioUnitario';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" onchange="formatoPesoColombiano(this);calcularFormula(\'cantidad';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'precioUnitario';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');calcularIva(\'precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'iva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'totalIva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');calcularRetefuente(\'precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'retefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'totalRetefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');valorTotal([\'#precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'#totalIva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'#totalRetefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\'], \'totalPorTodo';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');sumarPrecioTotal();calcularCamposAdicionales();" value="' . $fila['precio_unitario'] . '"></td>';
+                                                        echo '<td><input style="width:70px" type="text" class="inputPersonalizado campoFormulario campoNumero obligatorio" id="cantidad';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" value="1" onchange="calcularFormula(\'precioUnitario';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'cantidad';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');calcularIva(\'precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'iva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'totalIva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');calcularRetefuente(\'precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'retefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'totalRetefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');valorTotal([\'#precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'#totalIva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'#totalRetefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\'], \'totalPorTodo';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');sumarPrecioTotal();calcularCamposAdicionales();" value="' . $fila['cantidad'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" disabled value="' . $fila['precio_total'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="iva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" onchange="calcularIva(\'precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'iva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'totalIva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');valorTotal([\'#precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'#totalIva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'#totalRetefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\'], \'totalPorTodo';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');sumarPrecioTotal();calcularCamposAdicionales();" value="' . $fila['iva'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" id="totalIva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" class="inputPersonalizado campoFormulario" disabled value="' . $fila['totalIva'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="retefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" onchange="calcularRetefuente(\'precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'retefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'totalRetefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');valorTotal([\'#precioTotal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'#totalIva';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\', \'#totalRetefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\'], \'totalPorTodo';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '\');sumarPrecioTotal();calcularCamposAdicionales();" value="' . $fila['retefuente'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" id="totalRetefuente';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" class="inputPersonalizado campoFormulario" disabled value="' . $fila['totalRetefuente'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" id="totalPorTodo';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" class="inputPersonalizado campoFormulario" onchange="" disabled value="' . $fila['totalPorTodo'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" id="totalIncluidoOtrosPrecios';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" class="inputPersonalizado campoFormulario" onchange="" disabled value="' . $fila['totalValores'] . '"></td>';
                                                         echo '</tr>';
-        
+                                                        $rowCount++; // Incrementar el contador de filas
                                                     }
                                                 }
+
                                         }else{ ?>
                                                 <tr>
                                                     <td style="width:380px"><input type="text" class="inputPersonalizado campoFormulario obligatorio" id="materiales"></td>

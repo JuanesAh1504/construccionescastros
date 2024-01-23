@@ -4,7 +4,7 @@
     include_once("functions.php");
     global $conn;
     conectarBaseDeDatos();
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
         switch($_POST['accion']){
             case 'S-CampoUsuario':
                 cerrarConexion($conn);

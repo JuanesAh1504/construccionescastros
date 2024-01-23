@@ -199,3 +199,31 @@ a{
     height: 34px;
 }
 
+.tablaContabilidadContrato {
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tablaContabilidadContrato th,
+.tablaContabilidadContrato td {
+    padding: 12px;
+    text-align: center;
+}
+
+.tablaContabilidadContrato th {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.tablaContabilidadContrato tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.tablaContabilidadContrato .total-row {
+    font-weight: bold;
+    background-color: #343a40;
+    color: #ffffff;
+}
