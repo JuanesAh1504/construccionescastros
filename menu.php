@@ -16,14 +16,16 @@
             </li>
 
             <li class="sidebar-item">
-                <a class="sidebar-link" onclick="loadContent('crearCliente.php')" oncontextmenu="listarDocumentos('listarClientes.php');">
-                    <i class="align-middle" data-feather="user"></i> <span class="align-middle">Clientes</span>
+                <a class="sidebar-link" onclick="loadContent('crearCliente.php')" ontouchstart="listarDocumentos('listarClientes.php');" oncontextmenu="listarDocumentos('listarClientes.php');">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user align-middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> 
+                    <span class="align-middle">Clientes</span>
                 </a>
             </li>
 
             <li class="sidebar-item">
-                <a class="sidebar-link" onclick="loadContent('cotizacion.php')" oncontextmenu="listarDocumentos('listarCotizacion.php')">
-                    <i class="align-middle" data-feather="log-in"></i> <span class="align-middle">Cotizaciones</span>
+                <a class="sidebar-link" onclick="loadContent('cotizacion.php')" ontouchstart="listarDocumentos('listarCotizacion.php');" oncontextmenu="listarDocumentos('listarCotizacion.php');">
+                    <i class="align-middle" data-feather="log-in"></i> 
+                    <span class="align-middle">Cotizaciones</span>
                 </a>
             </li>
 

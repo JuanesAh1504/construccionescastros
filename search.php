@@ -51,12 +51,7 @@
                             $transporte = $xmlResponse->addChild('transporte', $row['transporte']);
                             $elementosProteccion = $xmlResponse->addChild('elementosProteccion', $row['elementosProteccion']);
                             $Dotacion = $xmlResponse->addChild('Dotacion', $row['Dotacion']);
-                            $sqlGastosContrato = sqlQuerySelect("SELECT total FROM gastoscontratos WHERE idContrato = '".$idCotizacion."'");
-                            if ($sqlGastosContrato->num_rows > 0) {
-                                while ($rowGastos = $sqlGastosContrato->fetch_assoc()) {
-                                    $totalP1 = $xmlResponse->addChild('Dotacion', $row['Dotacion']);
-                                }
-                            }
+                            
                         }  
                     }
                 }

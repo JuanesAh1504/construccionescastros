@@ -26,7 +26,7 @@ function agregarFila() {
     newRow.append($("<td><input style='width:110px' type='hidden' id='dotacionCalcular_" + rowCount + "' class='inputPersonalizado campoFormulario' onchange='tuFuncion(this);' disabled></td>"));
 
     newRow.append("<td><button type='button' class='btn btn-danger btn-sm delete-row-button' onclick='eliminarFila(this)'>-</button></td>");
-    
+    $('#rowCount').val(rowCount + 1);
     // Agregar la nueva fila a la tabla
     $("#dynamic-table tbody").append(newRow);
     
@@ -718,7 +718,7 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
         <td id="DotacionDiscriminado3"></td>\
       </tr>\
       <tr>\
-        <td colspan="10" id="totalRestante3"></td>\
+        <td colspan="11" id="totalRestante3"></td>\
     </tr>\
     </tbody>\
   </table>';
@@ -756,7 +756,11 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
             </div>';
   html += '<table class="table table-responsive tablaContabilidadContrato">\
   <thead>\
-    <tr>\
+      <tr>\
+      <th colspan="11" class="card-header">DISCRIMINACIÓN DE PRECIOS '+alcanceObra+'</th>\
+      </tr>\
+      <tr>\
+      <th></th>\
       <th>Fecha</th>\
       <th>Porcentaje</th>\
       <th>Valor pagado</th>\
@@ -770,7 +774,10 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
     </tr>\
   </thead>\
   <tbody>\
-    <tr>\
+  <tr>\
+      <td rowspan=2>\
+      <button onclick="openModal(\'modalP3\')" class="btn btn-primary btn-sm" ' + (botonModalPago3 ? 'disabled' : '') + '>Abrir Modal</button>\
+      </td>\
       <td rowspan=2>'+fechaCotizacion+'</td>\
       <td rowspan=2>'+porcentaje4+'</td>\
       <td rowspan=2>'+valorPago4+'</td>\
@@ -792,21 +799,52 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
       <td id="DotacionDiscriminado4"></td>\
     </tr>\
     <tr>\
-      <td colspan="10" id="totalRestante4"></td>\
+      <td colspan="11" id="totalRestante4"></td>\
     </tr>\
   </tbody>\
 </table>';
+  html += '<div id="modalP4" class="modal" onclick="closeModal(\'modalP4\');">\
+                <div class="modal-content" style="width: 38%;" onclick="event.stopPropagation();">\
+                    <span class="close" onclick="closeModal(\'modalP4\');">&times;</span>\
+                    <div style="text-align: center;">\
+                        <b><h3 class="text-dark">Agregar gastos</h3></b>\
+                    </div>\
+                    <button class="btn btn-primary" onclick="campoAgregarFila(\'#tablaPorcentaje4\')">+</button>\
+                    <table id="tablaPorcentaje4">\
+                        <tbody>\
+                            <tr>\
+                                <td>\
+                                    <div class="row">\
+                                        <div class="col-lg-6">\
+                                            <label for="producto"><b>Producto</b></label>\
+                                            <input type="text" class="form-control campoFormulario obligatorio" id="producto">\
+                                        </div>\
+                                        <div class="col-lg-6">\
+                                            <label for="precio"><b>Precio</b></label>\
+                                            <input type="hidden" id="rowCountModal" class="campoFormulario" value="1">\
+                                            <input type="hidden" id="numeralPorcentaje" class="campoFormulario" value="4">\
+                                            <input type="hidden" class="campoFormulario obligatorio" value="'+porcentaje4+'" id="porcentaje">\
+                                            <input type="hidden" class="campoFormulario obligatorio" value="'+documentoId+'" id="idContrato">\
+                                            <input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante4\', valorPorcentaje4Original);">\
+                                        </div>\
+                                    </div>\
+                                </td>\
+                            </tr>\
+                        </tbody>\
+                    </table>\
+                    <br>\
+                    <button class="btn btn-success" onclick="guardarGastos(\'#tablaPorcentaje3\', \'#totalRestante3\')">Guardar</button>\                </div>\
+            </div>';
     let arrayValoresAdicionales = [manoObra, porcentajeAdmin, porcentajeUtilidad, alquilerEquipos, transporte, elementosProteccion, Dotacion]
     $("#infoCotizacion").html(html);
     discriminarPorPrecios(valorPago1, arrayValoresAdicionales, 1);
     discriminarPorPrecios(valorPago2, arrayValoresAdicionales, 2);
     discriminarPorPrecios(valorPago3, arrayValoresAdicionales, 3);
     discriminarPorPrecios(valorPago4, arrayValoresAdicionales, 4);
-    let valorTotalPorcentaje1 = $('#totalRestante1').text().match(/\d+(\.\d+)?/);
-    let valorTotalPorcentaje2 = $('#totalRestante2').text().match(/\d+(\.\d+)?/);
-    let valorTotalPorcentaje3 = $('#totalRestante3').text().match(/\d+(\.\d+)?/);
-    let valorTotalPorcentaje4 = $('#totalRestante4').text().match(/\d+(\.\d+)?/);
-
+    let valorTotalPorcentaje1 = $('#totalRestante1').text().match(/-?\d+(\.\d+)?/);
+    let valorTotalPorcentaje2 = $('#totalRestante2').text().match(/-?\d+(\.\d+)?/);
+    let valorTotalPorcentaje3 = $('#totalRestante3').text().match(/-?\d+(\.\d+)?/);
+    let valorTotalPorcentaje4 = $('#totalRestante4').text().match(/-?\d+(\.\d+)?/);
     valorPorcentaje1Original = valorTotalPorcentaje1 ? valorTotalPorcentaje1[0] : null;
     valorPorcentaje2Original = valorTotalPorcentaje2 ? valorTotalPorcentaje2[0] : null;
     valorPorcentaje3Original = valorTotalPorcentaje3 ? valorTotalPorcentaje3[0] : null;
@@ -824,7 +862,7 @@ function closeModal(idModal) {
 
 function calcularGastosContabilidad(campo, totalAntesDe, porcentajeOriginal) {
     let valorTotalAntesDe = $('#' + totalAntesDe).text();
-    let soloNumeros = valorTotalAntesDe.match(/\d+(\.\d+)?/);
+    let soloNumeros = valorTotalAntesDe.match(/-?\d+(\.\d+)?/);
     let numeroExtraido = soloNumeros ? soloNumeros[0] : null;
     numeroExtraido = eliminarPuntosYConvertirAFloat(numeroExtraido);
 

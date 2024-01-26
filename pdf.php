@@ -4,11 +4,17 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/sql.php';
 
 function plantillaCotizacion() {
-    $sqlPDF = sqlQuerySelect("SELECT fechaCotizacion, organizacionEmpresas, alcanceObra, material, metros_unidades, precio_unitario, cantidad, precio_total, totalPorTodo, dias, manoObra, porcentajeAdmin, porcentajeUtilidad, alquilerEquipos, transporte, totalPorTodoTablaInput FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
-    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precio_unitario, cantidad, precio_total, totalPorTodo  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
+    $sqlPDF = sqlQuerySelect("SELECT c.fechaCotizacion, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, c.organizacionEmpresas, c.alcanceObra, c.material, c.metros_unidades, c.precio_unitario, c.cantidad, c.precio_total, c.totalPorTodo, c.dias, c.manoObra, c.porcentajeAdmin, c.porcentajeUtilidad, c.alquilerEquipos, c.transporte, c.valorTotalCotizacion FROM cotizacion c INNER JOIN clientes cl ON cl.numeroDocumento = c.organizacionEmpresas WHERE c.documentoId = '" . $_GET['id'] . "'");
+    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precio_unitario, cantidad, precio_total, totalValores  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
 
     if ($sqlPDF && mysqli_num_rows($sqlPDF) > 0) {
         $fila = $sqlPDF->fetch_assoc();
+        $nombreCliente = '';
+        if($fila['primerNombre'] !== '' || $fila['segundoNombre'] !== ''){
+            $nombreCliente = $fila['primerNombre'] . ' ' . $fila['segundoNombre'] . ' ' .$fila['primerApellido'] . ' ' . $fila['segundoApellido'];
+        }else{
+            $nombreCliente = $fila['razonSocial'];
+        }
         $html = '
         <!DOCTYPE html>
         <html lang="en">
@@ -125,14 +131,14 @@ function plantillaCotizacion() {
             <div class="container">
             <br><br>
                 <div class="primeraSeccion">
-                    <p>Girardota, 05 de octubre 2023. <br>
+                    <p>Girardota, '.obtenerFechaActual().'. <br>
                     Cordial saludo. <br>
                     Envío cotización.</p>
                 </div>
 
                 <div class="segundaSeccion">
                     CLIENTE <br>
-                    <span class="cliente">' . $fila['organizacionEmpresas'] . '</span>
+                    <span class="cliente">' . $nombreCliente . '</span>
                     <br><br><br>
                     ALCANCE DE LA OBRA <br>
                     <span class="alcanceObra">'.$fila['alcanceObra'].'</span>
@@ -161,29 +167,7 @@ function plantillaCotizacion() {
                 <header class="imgPortada" style="text-align: center;">
                     <img src="' . __DIR__ . '/img/logo.jpeg" alt="Logo Castros Solucion" style="width:300px;">
                 </header><br>
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-title">Información Adicional</div>
-                        <table class="info-table">
-                            <tr>
-                                <td>Fecha cotización:</td>
-                                <td>' . $fila['fechaCotizacion'] . '</td>
-                            </tr>
-                            <tr>
-                                <td>Días:</td>
-                                <td>' . $fila['dias'] . '</td>
-                            </tr>
-                            <tr>
-                                <td>Mano de obra:</td>
-                                <td>' . $fila['manoObra'] . '</td>
-                            </tr>
-                            <tr>
-                                <td>Transporte:</td>
-                                <td>' . $fila['transporte'] . '</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div><br><br>
+                <br><br>
                 <table>
                     <thead>
                         <tr>
@@ -205,12 +189,12 @@ function plantillaCotizacion() {
                                     <td>' . $row["material"] . '</td>
                                     <td>' . $row["metros_unidades"] . '</td>
                                     <td>' . $row["cantidad"] . '</td>
-                                    <td>' . $row["totalPorTodo"] . '</td>
+                                    <td>' . $row["totalValores"] . '</td>
                                 </tr>';
                         }
                     }
                     $html .= '<tr>
-                            <td colspan="4" style="text-align:right;font-weight:bold">Valor total Conceptos: <span style="color:red">'.$fila['totalPorTodoTablaInput'].'</span></td>
+                            <td colspan="4" style="text-align:right;font-weight:bold">Valor total Conceptos: <span style="color:red">'.$fila['valorTotalCotizacion'].'</span></td>
                         </tr>
                     </tbody>
                 </table><br><br>
