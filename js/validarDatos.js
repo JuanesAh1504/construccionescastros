@@ -59,15 +59,18 @@ function validarCampos(){
 
 function showAlerta(mensaje, tipo){
   let color;
+  let colorLetra;
     if (tipo == "1") {
-        color = "#f00";
+        color = "#f00"; //error
     } else if (tipo == "2") {
-        color = "#00a616";
+        color = "#00a616"; //success
     } else if (tipo == "3") {
-        color = "#fbff00";
+        color = "#fbff00"; //warning
+        colorLetra = "#000";
     }
     let errorElement = $('<div class="mensaje-error"></div>').html(mensaje);
     $(errorElement).css('background-color', color);
+    $(errorElement).css('color', colorLetra);
     $('#errores-container').prepend(errorElement);
     $('#errores-container').css('display', 'block');
     errorElement.hide().appendTo('#errores-container').fadeIn();

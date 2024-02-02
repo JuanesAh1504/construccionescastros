@@ -10,7 +10,7 @@
                 <button id="activarFuncionCargarListado" onclick="peticionListado('L-clientes')"></button>
             </div>
             <!-- Tabla de listado -->
-            <div id="tablaListado"></div>
+            <div id="tablaListado" class="listar"></div>
         </div>
     </body>
 </html>

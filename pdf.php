@@ -4,7 +4,7 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/sql.php';
 
 function plantillaCotizacion() {
-    $sqlPDF = sqlQuerySelect("SELECT c.fechaCotizacion, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, c.organizacionEmpresas, c.alcanceObra, c.material, c.metros_unidades, c.precio_unitario, c.cantidad, c.precio_total, c.totalPorTodo, c.dias, c.manoObra, c.porcentajeAdmin, c.porcentajeUtilidad, c.alquilerEquipos, c.transporte, c.valorTotalCotizacion FROM cotizacion c INNER JOIN clientes cl ON cl.numeroDocumento = c.organizacionEmpresas WHERE c.documentoId = '" . $_GET['id'] . "'");
+    $sqlPDF = sqlQuerySelect("SELECT c.fechaCotizacion, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, cl.razonSocial, c.organizacionEmpresas, c.alcanceObra, c.material, c.metros_unidades, c.precio_unitario, c.cantidad, c.precio_total, c.totalPorTodo, c.dias, c.manoObra, c.porcentajeAdmin, c.porcentajeUtilidad, c.alquilerEquipos, c.transporte, c.valorTotalCotizacion FROM cotizacion c INNER JOIN clientes cl ON cl.numeroDocumento = c.organizacionEmpresas WHERE c.documentoId = '" . $_GET['id'] . "'");
     $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precio_unitario, cantidad, precio_total, totalValores  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
 
     if ($sqlPDF && mysqli_num_rows($sqlPDF) > 0) {

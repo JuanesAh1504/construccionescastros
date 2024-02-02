@@ -2,7 +2,7 @@ function sendXML(archivo, accion, param, funcionRespuesta){
     if(archivo === 1){
         archivo = "accion.php";
     }else if(archivo === 2){
-        archivo = "search.php";
+        archivo = "buscar.php";
     }
     var xmlString = "<xml><accion>"+accion+"</accion><param>"+param+"</param></xml>";
     var xmlhttp = new XMLHttpRequest();

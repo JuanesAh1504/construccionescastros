@@ -387,7 +387,9 @@ function eliminarRegistro(documento, tabla){
 }
 
 function inicializarPaginaContabilidad() {
-    cargarCotizaciones();
+    setTimeout(function() {
+        cargarCotizaciones();
+    }, 500);
 }
 
 function cargarInfoCotizaciones(){
@@ -401,20 +403,22 @@ function cargarInfoCotizaciones(){
 }
 
 function cargarCotizaciones() {
-    // Realizar la solicitud para obtener las opciones del select
-    let data = {};
-    data["accion"] = "S-CotizacionesContabilidad";
-    $.ajax({
-        url: "search.php", // Archivo PHP que maneja la consulta a la base de datos
-        method: "POST",
-        data: data,
-        success: function(data) {
-            // Agregar las opciones al select
-            $("#cotizacionSelect").html(data);
-        }
-    });
+    // Realizar la solicitud para obtener las opciones del selects
+    sendXML(2, 'S-Contrato', '', cargarCotizacionesAnswer);
+    
 }
 
+function cargarCotizacionesAnswer(xml){
+    let selectContrato = $('#cotizacionSelect');
+    let valueOptions = $('documentoId',xml);
+    let options = $('alcanceObra',xml);
+    let htmlOptions = '<option value=""></option>';
+    for(let i = 0; i < options.length; i++){
+        let valueOption = $(valueOptions[i]).text();
+        htmlOptions += '<option value="'+valueOption+'">'+$(options[i]).text()+'</option>';
+    }
+    $(selectContrato).html(htmlOptions);
+}
 function obtenerInfoCotizacion(cotizacionID) {
         let data = {
             cotizacionID: cotizacionID,
@@ -531,7 +535,7 @@ function obtenerDetallesCotizacionContabilidad(detalles){
     <tbody>\
       <tr>\
         <td rowspan=2>\
-        <button onclick="openModal(\'modalP1\')" class="btn btn-primary btn-sm" ' + (botonModalPago1 ? 'disabled' : '') + '>Abrir Modal</button>\
+        <button onclick="openModal(\'modalP1\');consultarDatosModalGastos(\'modalP1\')" class="btn btn-primary btn-sm" ' + (botonModalPago1 ? 'disabled' : '') + '>Gastos</button>\
         </td>\
         <td rowspan=2>'+fechaCotizacion+'</td>\
         <td rowspan=2>'+porcentaje1+'</td>\
@@ -613,7 +617,7 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
     <tbody>\
         <tr>\
         <td rowspan=2>\
-        <button onclick="openModal(\'modalP2\')" class="btn btn-primary btn-sm" ' + (botonModalPago2 ? 'disabled' : '') + '>Abrir Modal</button>\
+        <button onclick="openModal(\'modalP2\');consultarDatosModalGastos(\'modalP2\')" class="btn btn-primary btn-sm" ' + (botonModalPago2 ? 'disabled' : '') + '>Gastos</button>\
         </td>\
         <td rowspan=2>'+fechaCotizacion+'</td>\
         <td rowspan=2>'+porcentaje2+'</td>\
@@ -647,7 +651,7 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
                     <div style="text-align: center;">\
                         <b><h3 class="text-dark">Agregar gastos</h3></b>\
                     </div>\
-                    <button class="btn btn-primary" onclick="campoAgregarFila(\'#tablaPorcentaje1\')">+</button>\
+                    <button class="btn btn-primary" onclick="campoAgregarFila(\'#tablaPorcentaje2\')">+</button>\
                     <table id="tablaPorcentaje2">\
                         <tbody>\
                             <tr>\
@@ -695,7 +699,7 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
     <tbody>\
         <tr>\
         <td rowspan=2>\
-        <button onclick="openModal(\'modalP3\')" class="btn btn-primary btn-sm" ' + (botonModalPago3 ? 'disabled' : '') + '>Abrir Modal</button>\
+        <button onclick="openModal(\'modalP3\');consultarDatosModalGastos(\'modalP3\')" class="btn btn-primary btn-sm" ' + (botonModalPago3 ? 'disabled' : '') + '>Gastos</button>\
         </td>\
         <td rowspan=2>'+fechaCotizacion+'</td>\
         <td rowspan=2>'+porcentaje3+'</td>\
@@ -776,7 +780,7 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
   <tbody>\
   <tr>\
       <td rowspan=2>\
-      <button onclick="openModal(\'modalP3\')" class="btn btn-primary btn-sm" ' + (botonModalPago3 ? 'disabled' : '') + '>Abrir Modal</button>\
+      <button onclick="openModal(\'modalP4\');consultarDatosModalGastos(\'modalP4\')" class="btn btn-primary btn-sm" ' + (botonModalPago4 ? 'disabled' : '') + '>Gastos</button>\
       </td>\
       <td rowspan=2>'+fechaCotizacion+'</td>\
       <td rowspan=2>'+porcentaje4+'</td>\
@@ -833,7 +837,7 @@ html += '<div id="modalP1" class="modal" onclick="closeModal();">\
                         </tbody>\
                     </table>\
                     <br>\
-                    <button class="btn btn-success" onclick="guardarGastos(\'#tablaPorcentaje3\', \'#totalRestante3\')">Guardar</button>\                </div>\
+                    <button class="btn btn-success" onclick="guardarGastos(\'#tablaPorcentaje4\', \'#totalRestante4\')">Guardar</button>\                </div>\
             </div>';
     let arrayValoresAdicionales = [manoObra, porcentajeAdmin, porcentajeUtilidad, alquilerEquipos, transporte, elementosProteccion, Dotacion]
     $("#infoCotizacion").html(html);
@@ -982,28 +986,65 @@ function cargarContratosAnswer(xml){
         let valorPago1 = $('valorPago1', xml).text();
         let valorPago2 = $('valorPago2', xml).text();
         let valorPago3 = $('valorPago3', xml).text();
-        let valorPago4 = $('valorPago4', xml).text();    
+        let valorPago4 = $('valorPago4', xml).text();  
+        if(valorPago1 == ""){
+            valorPago1 = calcularPagoContrato('#valorPago1', $('porcentaje1', xml).text(), $('valorTotalCotizacion', xml).text());
+        }
+        if(valorPago2 == ""){
+            valorPago2 = calcularPagoContrato('#valorPago2', $('porcentaje2', xml).text(), $('valorTotalCotizacion', xml).text());
+        }
+        if(valorPago3 == ""){
+            valorPago3 = calcularPagoContrato('#valorPago3', $('porcentaje3', xml).text(), $('valorTotalCotizacion', xml).text());
+        }
+        if(valorPago4 == ""){
+            valorPago4 = calcularPagoContrato('#valorPago4', $('porcentaje4', xml).text(), $('valorTotalCotizacion', xml).text());
+        }
         $('#valorPago1').val(valorPago1);
         $('#valorPago2').val(valorPago2);
         $('#valorPago3').val(valorPago3);
         $('#valorPago4').val(valorPago4);
         if(!vacio(valorPago1) || !vacio(valorPago2) || !vacio(valorPago3) || !vacio(valorPago4)){
             $('#guardarPagosCotizacion').attr('onclick', 'editarPagoContrato()');
-            calcularTotalRestarContrato($('valorTotalCotizacion', xml).text(), valorPago1, valorPago2, valorPago3, valorPago4);
+            calcularTotalRestarContrato($('valorTotalCotizacion', xml).text(), $('#valorPago1'), $('#valorPago2'), $('#valorPago3'), $('#valorPago4'));
         }
+        let pagado1 = $('pagado1', xml).text() === "true" ? true : false;
+        let pagado2 = $('pagado2', xml).text() === "true" ? true : false;
+        let pagado3 = $('pagado3', xml).text() === "true" ? true : false;
+        let pagado4 = $('pagado4', xml).text() === "true" ? true : false;
         $('#valorTotalCotizacion').text($('valorTotalCotizacion', xml).text());
+        if ($('#checkboxPagado1').prop('checked', pagado1)) {
+            $('#checkboxPagado1').trigger('change');
+        }
+        if ($('#checkboxPagado2').prop('checked', pagado2)) {
+            $('#checkboxPagado2').trigger('change');
+        }
+        if ($('#checkboxPagado3').prop('checked', pagado3)) {
+            $('#checkboxPagado3').trigger('change');
+        }
+        if ($('#checkboxPagado4').prop('checked', pagado4)) {
+            $('#checkboxPagado4').trigger('change');
+        }
         $('#pagoValorContrato').show();
     }
 }
 
-function calcularTotalRestarContrato(totalContrato, valor1, valor2, valor3, valor4){
+function calcularPagoContrato(idCampo, porcentaje, valorTotalContrato){
+    return formatoPesoColombianoReturn(Math.round(eliminarPuntosYConvertirAFloat(valorTotalContrato) * (eliminarPuntosYConvertirAFloat(porcentaje) / 100)));
+}
+
+function calcularTotalRestarContrato(totalContrato, valores){
     totalContrato = eliminarPuntosYConvertirAFloat(totalContrato);
-    valor1 = eliminarPuntosYConvertirAFloat(valor1);
-    valor2 = eliminarPuntosYConvertirAFloat(valor2);
-    valor3 = eliminarPuntosYConvertirAFloat(valor3);
-    valor4 = eliminarPuntosYConvertirAFloat(valor4);
-    let resta = totalContrato - valor1 - valor2 - valor3 - valor4;
-    $('#valorRestante').text(formatoPesoColombianoReturn(resta));
+    let restante = totalContrato;
+    for(let i = 0; i < valores.length; i++){
+        let campo = $(valores[i]);
+        let isDisabled = $(campo).prop('disabled');
+        if(isDisabled){
+            continue;
+        }
+        let valorCampo = eliminarPuntosYConvertirAFloat($(campo).val());
+        restante -= valorCampo;
+    }
+    $('#valorRestante').text(formatoPesoColombianoReturn(restante));
 }
 
 function editarPagoContrato(){
@@ -1012,11 +1053,27 @@ function editarPagoContrato(){
     let valorPago2 = $('#valorPago2').val();
     let valorPago3 = $('#valorPago3').val();
     let valorPago4 = $('#valorPago4').val();
+    let fechaPago1 = $('#fechaPagado1').val();
+    let fechaPago2 = $('#fechaPagado2').val();
+    let fechaPago3 = $('#fechaPagado3').val();
+    let fechaPago4 = $('#fechaPagado4').val();
+    let pagado1 = $('#checkboxPagado1').prop('checked');
+    let pagado2 = $('#checkboxPagado2').prop('checked');
+    let pagado3 = $('#checkboxPagado3').prop('checked');
+    let pagado4 = $('#checkboxPagado4').prop('checked');
     let param = '<cotizacionId>'+cotizacionId+'</cotizacionId>';
     param = param + '<valorPago1>'+valorPago1+'</valorPago1>';
     param = param + '<valorPago2>'+valorPago2+'</valorPago2>';
     param = param + '<valorPago3>'+valorPago3+'</valorPago3>';
     param = param + '<valorPago4>'+valorPago4+'</valorPago4>';
+    param = param + '<fechaPagado1>'+fechaPago1+'</fechaPagado1>';
+    param = param + '<fechaPagado2>'+fechaPago2+'</fechaPagado2>';
+    param = param + '<fechaPagado3>'+fechaPago3+'</fechaPagado3>';
+    param = param + '<fechaPagado4>'+fechaPago4+'</fechaPagado4>';
+    param = param + '<pagado1>'+pagado1+'</pagado1>';
+    param = param + '<pagado2>'+pagado2+'</pagado2>';
+    param = param + '<pagado3>'+pagado3+'</pagado3>';
+    param = param + '<pagado4>'+pagado4+'</pagado4>';
     sendXML(1, 'U-pagoContrato', param, editarPagoContratoAnswer);
 }
 
@@ -1025,3 +1082,60 @@ function editarPagoContratoAnswer(xml){
         mostrarAlertas(['Se ha actualizado el pago del contrato correctamente'], 'success');
     }
 }
+
+function consultarDatosModalGastos(modalId){
+    setTimeout(function(){
+        let rowCount = $('#rowCountModal', '#'+modalId).val();
+        let numeralPorcentaje = $('#numeralPorcentaje', '#'+modalId).val();
+        let porcentaje = $('#porcentaje', '#'+modalId).val();
+        let documentoId = $('#idContrato', '#'+modalId).val();
+        let param = '<modal>'+modalId+'</modal><rowCount>'+rowCount+'</rowCount><numeralPorcentaje>'+numeralPorcentaje+'</numeralPorcentaje><porcentaje>'+porcentaje+'</porcentaje><documentoId>'+documentoId+'</documentoId>';
+        sendXML(2, 'S-gastosContratos', param, consultarDatosModalGastosAnswer);
+    },500);
+}
+
+function consultarDatosModalGastosAnswer(xml) {
+    let modalId = $('modal', xml).text();
+    let modal = $('#' + modalId);
+    let tablaId = $(modal).find('table').attr('id');
+    let tabla = $('#' + tablaId);
+    // Verificar si es necesario agregar filas
+    if ($('producto', xml).length - 1 === tabla.find('tr').length) {
+        return; // No es necesario agregar filas, salir de la función
+    }
+    campoAgregarFila('#' + tablaId, $('producto', xml).length - 1);
+    let esEdicion = false;
+    let productos = $('producto', xml);
+    let precios = $('precio', xml);
+    for (let index = 0; index < productos.length; index++) {
+        let producto = productos.eq(index).text();
+        let precio = precios.eq(index).text();
+        // Verificar si los campos están vacíos antes de asignarles valores
+        let productoCampo = tabla.find('tr:eq(' + index + ')').find('[id*=producto]');
+        let precioCampo = tabla.find('tr:eq(' + index + ')').find('[id*=precio]');
+        if (productoCampo.val() === "" && precioCampo.val() === "") {
+            // Asignar los valores a los campos correspondientes en cada fila clonada solo si están vacíos
+            productoCampo.val(producto);
+            precioCampo.val(precio);
+            esEdicion = true;
+        }
+    }
+    if (esEdicion) {
+        let botonGuardar = $('button[onclick^="guardarGastos("][onclick$=")"]', modal);
+        if (botonGuardar.length > 0) {
+            var nuevoOnclick = 'editarGastos("#' + tablaId + '", "")';
+            // Cambiar el atributo onclick del botón
+            $(botonGuardar).attr('onclick', nuevoOnclick);
+        }
+    }
+    let filas = tabla.find('tr');
+    for (let i = 0; i < filas.length; i++) {
+        let productoCampo = $(filas[i]).find('[id*=producto]');
+        let precioCampo = $(filas[i]).find('[id*=precio]');
+        if (productoCampo.val() === "" && precioCampo.val() === "") {
+            $(filas[i]).remove();
+        }
+    }
+    $($('tdTotal',xml).text()).html('<h3>Total restante</h3> '+$('total', xml).text()+'');
+}
+

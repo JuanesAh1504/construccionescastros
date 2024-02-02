@@ -289,8 +289,8 @@
                 $totalRestante = $_POST['totalRestante'];
                 $verificarExistencia = sqlQuerySelect("SELECT total FROM gastoscontratos WHERE total = '".$totalRestante."'");
                 if($verificarExistencia->num_rows <= 0){
-                    $stmt = $conn->prepare("INSERT INTO gastoscontratos (total) VALUES (?)");
-                    $stmt->bind_param("s", $totalRestante);
+                    $stmt = $conn->prepare("INSERT INTO gastoscontratos (numeralPorcentaje, porcentaje, idContrato, total) VALUES (?, ?, ?, ?)");
+                    $stmt->bind_param("ssss", $numeralPorcentaje, $porcentaje, $idContrato, $totalRestante);
                     $stmt->execute();
                     if ($stmt->affected_rows < 1) {
                         $mensaje = mostrarAlerta("Error al insertar los datos, inténtelo de nuevo más tarde.", "danger");

@@ -178,7 +178,7 @@ function plantillaCotizacion() {
            pagar al <b>EL CONTRATISTA:</b> el equivalente a los precios unitarios establecidos en el
            presupuesto a todo costo, anexo de acuerdo a los cual el valor del contrato será de
            <b>
-           '.convertirNumeroATexto($fila['valorTotalCotizacion']).'('.$fila['valorTotalCotizacion'].')</b><br><br>
+           ('.$fila['valorTotalCotizacion'].')</b><br><br>
            <b>SEXTA: FORMA DE PAGO: EL CONTRATANTE</b> pagara a <b>EL CONTRATISTA</b>, el
            50% al iniciar, el 40% a mitad de obra y 10% al finalizar entera satisfacción.<br><br>
            <b>SEPTIMA: TIEMPO DE ENTREGA:</b> El tiempo de entrega de la obra del presente
@@ -218,85 +218,7 @@ function plantillaCotizacion() {
 
     return $html;
 }
-function convertirNumeroATexto($numero) {
-    $unidades = array('cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve');
-    $decenas = array('', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa');
-    $centenas = array('', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos');
-    $miles = array('', 'mil', 'millón', 'mil millones', 'billón', 'mil billones');
 
-    $resultado = '';
-
-    $parteEntera = floor($numero);
-    $parteDecimal = ($numero - $parteEntera) * 1000;
-
-    // Convertir la parte entera a texto
-    $resultado .= convertirParteEnteraATexto($parteEntera, $miles);
-
-    // Agregar la parte decimal si existe
-    if ($parteDecimal > 0) {
-        $resultado .= ' con ' . convertirParteEnteraATexto($parteDecimal, $miles);
-    }
-
-    return trim($resultado);
-}
-
-function convertirParteEnteraATexto($parteEntera, $miles) {
-    $resultado = '';
-
-    // Iterar sobre cada bloque de tres dígitos
-    for ($i = 0; $parteEntera > 0; $i++) {
-        $bloque = $parteEntera % 1000;
-        $parteEntera = floor($parteEntera / 1000);
-
-        if ($bloque > 0) {
-            // Convertir el bloque actual a texto
-            $bloqueTexto = convertirBloqueATexto($bloque, $miles[$i]);
-
-            // Concatenar al resultado
-            $resultado = $bloqueTexto . ' ' . $resultado;
-        }
-    }
-
-    return trim($resultado);
-}
-
-function convertirBloqueATexto($bloque, $unidad) {
-    $unidades = array('cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve');
-    $decenas = array('', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa');
-    $centenas = array('', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos');
-
-    $resultado = '';
-
-    // Obtener las centenas, decenas y unidades del bloque
-    $centena = floor($bloque / 100);
-    $decena = floor(($bloque % 100) / 10);
-    $unidad = $bloque % 10;
-
-    // Convertir la centena a texto
-    if ($centena > 0) {
-        $resultado .= $centenas[$centena] . ' ';
-    }
-
-    // Convertir la decena y la unidad a texto
-    if ($decena > 0 || $unidad > 0) {
-        if ($decena == 1 && $unidad > 0) {
-            // Caso especial para números entre 10 y 19
-            $resultado .= 'dieci' . $unidades[$unidad] . ' ';
-        } else {
-            $resultado .= $decenas[$decena] . ' ';
-            if ($unidad > 0) {
-                $resultado .= $unidades[$unidad] . ' ';
-            }
-        }
-    }
-
-    // Agregar la unidad (mil, millón, billón, etc.)
-    if (!empty($unidad) || $bloque == 1) {
-        $resultado .= $unidad . ' ' . $unidad;
-    }
-
-    return trim($resultado);    
-}
 $mpdf = new \Mpdf\Mpdf();
 $mpdf->setFooter('{PAGENO}');
 $html = plantillaCotizacion();
