@@ -123,6 +123,7 @@
                                             <th>Valor retefuente</th>
                                             <th>Valor total</th>
                                             <th>Valor incluido demás gastos</th>
+                                            <th>Precio unitario final</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -178,7 +179,7 @@
                                                         echo '\');sumarPrecioTotal();calcularCamposAdicionales();" value="' . $fila['precio_unitario'] . '"></td>';
                                                         echo '<td><input style="width:70px" type="text" class="inputPersonalizado campoFormulario campoNumero obligatorio" id="cantidad';
                                                         echo $rowCount > 0 ? '_' . $rowCount : '';
-                                                        echo '" value="1" onchange="calcularFormula(\'precioUnitario';
+                                                        echo '"onchange="calcularFormula(\'precioUnitario';
                                                         echo $rowCount > 0 ? '_' . $rowCount : '';
                                                         echo '\', \'cantidad';
                                                         echo $rowCount > 0 ? '_' . $rowCount : '';
@@ -254,6 +255,9 @@
                                                         echo '<td><input style="width:110px" type="text" id="totalIncluidoOtrosPrecios';
                                                         echo $rowCount > 0 ? '_' . $rowCount : '';
                                                         echo '" class="inputPersonalizado campoFormulario" onchange="" disabled value="' . $fila['totalValores'] . '"></td>';
+                                                        echo '<td><input style="width:110px" type="text" id="precioUnitarioFinal';
+                                                        echo $rowCount > 0 ? '_' . $rowCount : '';
+                                                        echo '" class="inputPersonalizado campoFormulario" onchange="" disabled value="' . $fila['precioUnitarioFinalValores'] . '"></td>';
                                                         echo '</tr>';
                                                         $rowCount++; // Incrementar el contador de filas
                                                     }
@@ -263,15 +267,16 @@
                                                 <tr>
                                                     <td style="width:380px"><input type="text" class="inputPersonalizado campoFormulario obligatorio" id="materiales"></td>
                                                     <td><input type="text" class="inputPersonalizado campoFormulario" id="metrosUnidades"></td>
-                                                    <td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario obligatorio" id="precioUnitario" onchange="formatoPesoColombiano(this);calcularFormula('cantidad', 'precioUnitario', 'precioTotal');calcularIva('precioTotal', 'iva', 'totalIva');calcularRetefuente('precioTotal', 'retefuente', 'totalRetefuente');valorTotal(['#precioTotal', '#totalIva', '#totalRetefuente'], 'totalPorTodo');calcularCamposAdicionales();sumarPrecioTotal();"></td>
-                                                    <td><input style="width:70px" type="text" class="inputPersonalizado campoFormulario campoNumero obligatorio" id="cantidad" value="1" onchange="calcularFormula('precioUnitario', 'cantidad', 'precioTotal');calcularIva('precioTotal', 'iva', 'totalIva');calcularRetefuente('precioTotal', 'retefuente', 'totalRetefuente');valorTotal(['#precioTotal', '#totalIva', '#totalRetefuente'], 'totalPorTodo');sumarPrecioTotal();calcularCamposAdicionales()"></td>
+                                                    <td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario obligatorio" id="precioUnitario" onchange="formatoPesoColombiano(this);calcularFormula('cantidad', 'precioUnitario', 'precioTotal');calcularIva('precioTotal', 'iva', 'totalIva');calcularRetefuente('precioTotal', 'retefuente', 'totalRetefuente');valorTotal(['#precioTotal', '#totalIva', '#totalRetefuente'], 'totalPorTodo');calcularCamposAdicionales(1);sumarPrecioTotal();calcularCamposAdicionales(2);"></td>
+                                                    <td><input style="width:70px" type="text" class="inputPersonalizado campoFormulario campoNumero obligatorio" id="cantidad" value="1" onchange="calcularFormula('precioUnitario', 'cantidad', 'precioTotal');calcularIva('precioTotal', 'iva', 'totalIva');calcularRetefuente('precioTotal', 'retefuente', 'totalRetefuente');valorTotal(['#precioTotal', '#totalIva', '#totalRetefuente'], 'totalPorTodo');sumarPrecioTotal();calcularCamposAdicionales(1);calcularCamposAdicionales(2)"></td>
                                                     <td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="precioTotal" disabled></td>
-                                                    <td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="iva" onchange="calcularIva('precioTotal', 'iva', 'totalIva');valorTotal(['#precioTotal', '#totalIva', '#totalRetefuente'], 'totalPorTodo');sumarPrecioTotal();calcularCamposAdicionales()"></td>
+                                                    <td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="iva" onchange="calcularIva('precioTotal', 'iva', 'totalIva');valorTotal(['#precioTotal', '#totalIva', '#totalRetefuente'], 'totalPorTodo');sumarPrecioTotal();calcularCamposAdicionales(1);calcularCamposAdicionales(2)"></td>
                                                     <td><input style="width:110px" type="text" id="totalIva" class="inputPersonalizado campoFormulario" disabled></td>
-                                                    <td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="retefuente" onchange="calcularRetefuente('precioTotal', 'retefuente', 'totalRetefuente');valorTotal(['#precioTotal', '#totalIva', '#totalRetefuente'], 'totalPorTodo');sumarPrecioTotal();calcularCamposAdicionales()"></td>
+                                                    <td><input style="width:110px" type="text" class="inputPersonalizado campoFormulario" id="retefuente" onchange="calcularRetefuente('precioTotal', 'retefuente', 'totalRetefuente');valorTotal(['#precioTotal', '#totalIva', '#totalRetefuente'], 'totalPorTodo');sumarPrecioTotal();calcularCamposAdicionales(1);calcularCamposAdicionales(2)"></td>
                                                     <td><input style="width:110px" type="text" id="totalRetefuente" class="inputPersonalizado campoFormulario" disabled></td>
                                                     <td><input style="width:110px" type="text" id="totalPorTodo" class="inputPersonalizado campoFormulario" onchange="" disabled></td>
                                                     <td><input style="width:110px" type="text" id="totalIncluidoOtrosPrecios" class="inputPersonalizado campoFormulario" onchange="" disabled></td>
+                                                    <td><input style="width:110px" type="text" id="precioUnitarioFinal" class="inputPersonalizado campoFormulario" onchange="" disabled></td>
                                                 </tr>
                                         <?php }?>
                                         <tr class="addNuevaFila">
@@ -291,11 +296,13 @@
                                             <td id="totalRetefuenteTabla" style="font-weight:bold"></td>
                                             <td id="totalPorTodoTabla" style="font-weight:bold"></td>
                                             <td id="totalValoresIncluidos" style="font-weight:bold"></td>
+                                            <td id="precioUnitarioFinalTabla" style="font-weight:bold"></td>
                                             <input type="hidden" class="campoFormulario" id="totalNetoInput">
                                             <input type="hidden" class="campoFormulario" id="totalIVAInput">
                                             <input type="hidden" class="campoFormulario" id="totalRetefuenteTablaInput">
                                             <input type="hidden" class="campoFormulario" id="totalPorTodoTablaInput">
                                             <input type="hidden" class="campoFormulario" id="totalValoresIncluidosInput">
+                                            <input type="hidden" class="campoFormulario" id="precioUnitarioFinalInput">
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -312,35 +319,35 @@
                     <div class="row">
                         <div class="form-group col-md-5 campo">
                             <label for="mano-obra">Mano de obra</label>
-                            <input type="text" class="form-control campoFormulario" id="manoObra" onchange="formatoPesoColombiano(this);sumarPrecioTotal();calcularCamposAdicionales();" value="<?php if($esEdicion){echo $manoObra;}?>">
+                            <input type="text" class="form-control campoFormulario" id="manoObra" onchange="formatoPesoColombiano(this);sumarPrecioTotal();calcularCamposAdicionales();calcularCamposAdicionales(2);" value="<?php if($esEdicion){echo $manoObra;}?>">
                         </div>
                         <div class="form-group col-md-5 campo">
                             <label for="porcentaje-admin">Porcentaje admin</label>
-                            <input type="text" class="form-control campoFormulario" id="porcentajeAdmin"onchange="calcularCamposAdicionales()" value="<?php if($esEdicion){echo $porcentajeAdmin;}?>">
+                            <input type="text" class="form-control campoFormulario" id="porcentajeAdmin"onchange="calcularCamposAdicionales();calcularCamposAdicionales(2)" value="<?php if($esEdicion){echo $porcentajeAdmin;}?>">
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-md-5 campo">
                             <label for="porcentaje-utilidad">Porcentaje utilidad</label>
-                            <input type="text" class="form-control campoFormulario" id="porcentajeUtilidad" onchange="formatoPesoColombiano(this);calcularCamposAdicionales()" value="<?php if($esEdicion){echo $porcentajeUtilidad;}?>">
+                            <input type="text" class="form-control campoFormulario" id="porcentajeUtilidad" onchange="formatoPesoColombiano(this);calcularCamposAdicionales();calcularCamposAdicionales(2)" value="<?php if($esEdicion){echo $porcentajeUtilidad;}?>">
                         </div>
                         <div class="form-group col-md-3 campo">
                             <label for="alquiler-equipos">Alquiler de equipos</label>
-                            <input type="text" class="form-control campoFormulario" id="alquilerEquipos" onchange="formatoPesoColombiano(this);calcularCamposAdicionales()" value="<?php if($esEdicion){echo $alquilerEquipos;}?>">
+                            <input type="text" class="form-control campoFormulario" id="alquilerEquipos" onchange="formatoPesoColombiano(this);calcularCamposAdicionales();calcularCamposAdicionales(2)" value="<?php if($esEdicion){echo $alquilerEquipos;}?>">
                         </div>
                         <div class="form-group col-md-3 campo">
                             <label for="transporte">Transporte</label>
-                            <input type="text" class="form-control campoFormulario" id="transporte" onchange="formatoPesoColombiano(this);calcularCamposAdicionales()" value="<?php if($esEdicion){echo $transporte;}?>">
+                            <input type="text" class="form-control campoFormulario" id="transporte" onchange="formatoPesoColombiano(this);calcularCamposAdicionales();calcularCamposAdicionales(2)" value="<?php if($esEdicion){echo $transporte;}?>">
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-md-3 campo">
                             <label for="elementosProteccion">Elementos de protección</label>
-                            <input type="text" class="form-control campoFormulario" id="elementosProteccion" onchange="formatoPesoColombiano(this);sumarPrecioTotal();calcularCamposAdicionales()" value="<?php if($esEdicion){echo $elementosProteccion;}?>">
+                            <input type="text" class="form-control campoFormulario" id="elementosProteccion" onchange="formatoPesoColombiano(this);sumarPrecioTotal();calcularCamposAdicionales();calcularCamposAdicionales(2)" value="<?php if($esEdicion){echo $elementosProteccion;}?>">
                         </div>
                         <div class="form-group col-md-3 campo">
                             <label for="Dotacion">Dotacion</label>
-                            <input type="text" class="form-control campoFormulario" id="Dotacion" onchange="formatoPesoColombiano(this);calcularCamposAdicionales()" value="<?php if($esEdicion){echo $Dotacion;}?>">
+                            <input type="text" class="form-control campoFormulario" id="Dotacion" onchange="formatoPesoColombiano(this);calcularCamposAdicionales();calcularCamposAdicionales(2)" value="<?php if($esEdicion){echo $Dotacion;}?>">
                         </div>
                         <div class="form-group col-md-1 campo">
                             <label for="Porcentaje1">P1</label>

@@ -17,6 +17,7 @@
                 $totalRetefuenteTablaInput = $_POST['totalRetefuenteTablaInput'];
                 $totalPorTodoTablaInput = $_POST['totalPorTodoTablaInput'];
                 $totalValoresIncluidosInput = $_POST['totalValoresIncluidosInput'];
+                $precioUnitarioFinalInput = $_POST['precioUnitarioFinalInput'];
                 $dias = $_POST['dias'];
                 $manoObra = $_POST['manoObra'];
                 $porcentajeAdmin = $_POST['porcentajeAdmin'];
@@ -31,8 +32,8 @@
                 $Porcentaje4 = $_POST['Porcentaje4'];   
                 $valorTotalCotizacion = $_POST['valorTotalCotizacion'];
                 $estado = 0;
-                $stmt = $conn->prepare("INSERT INTO cotizacion (documentoId, fechaCotizacion, fechaCotizacionFin, organizacionEmpresas, alcanceObra, totalNetoInput, totalIVAInput, totalRetefuenteTablaInput, totalPorTodoTablaInput, dias, manoObra, porcentajeAdmin, porcentajeUtilidad, alquilerEquipos, transporte, elementosProteccion, Dotacion, Porcentaje1, Porcentaje2, Porcentaje3, Porcentaje4, valorTotalCotizacion, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sssssssssssssssssssssss", $documentoId, $fechaCotizacion, $fechaCotizacionFin, $cliente, $alcanceObra, $totalNetoInput, $totalIVAInput, $totalRetefuenteTablaInput, $totalPorTodoTablaInput, $dias, $manoObra, $porcentajeAdmin, $porcentajeUtilidad, $alquilerEquipos, $transporte, $elementosProteccion, $Dotacion, $Porcentaje1, $Porcentaje2, $Porcentaje3, $Porcentaje4, $valorTotalCotizacion, $estado);
+                $stmt = $conn->prepare("INSERT INTO cotizacion (documentoId, fechaCotizacion, fechaCotizacionFin, organizacionEmpresas, alcanceObra, totalNetoInput, totalIVAInput, totalRetefuenteTablaInput, totalPorTodoTablaInput, precioUnitarioFinal, dias, manoObra, porcentajeAdmin, porcentajeUtilidad, alquilerEquipos, transporte, elementosProteccion, Dotacion, Porcentaje1, Porcentaje2, Porcentaje3, Porcentaje4, valorTotalCotizacion, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("ssssssssssssssssssssssss", $documentoId, $fechaCotizacion, $fechaCotizacionFin, $cliente, $alcanceObra, $totalNetoInput, $totalIVAInput, $totalRetefuenteTablaInput, $totalPorTodoTablaInput, $precioUnitarioFinalInput, $dias, $manoObra, $porcentajeAdmin, $porcentajeUtilidad, $alquilerEquipos, $transporte, $elementosProteccion, $Dotacion, $Porcentaje1, $Porcentaje2, $Porcentaje3, $Porcentaje4, $valorTotalCotizacion, $estado);
                 $stmt->execute();
                 $contadorEjecuciones = 0;
                 if ($stmt->affected_rows < 1) {
@@ -58,6 +59,7 @@
                         $totalRetefuente = $_POST['totalRetefuente'];
                         $totalPorTodo = $_POST['totalPorTodo'];
                         $totalValoresIncluidos = $_POST['totalIncluidoOtrosPrecios'];
+                        $precioUnitarioFinal = $_POST['precioUnitarioFinal'];
                     }else{
                         $materiales = $_POST['materiales_' . $i];
                         $metrosUnidades = $_POST['metrosUnidades_' . $i];
@@ -70,10 +72,11 @@
                         $totalRetefuente = $_POST['totalRetefuente_' . $i];
                         $totalPorTodo = $_POST['totalPorTodo_' . $i];
                         $totalValoresIncluidos = $_POST['totalIncluidoOtrosPrecios_' . $i];
+                        $precioUnitarioFinal = $_POST['precioUnitarioFinal_' . $i];
                     }
                     // Inserta los datos de la tabla dinámica en la base de datos, utilizando $documentoId para relacionarlos
-                    $stmt = $conn->prepare("INSERT INTO cotizacion (documentoId, material, metros_unidades, precio_unitario, cantidad, precio_total, iva, totalIva, retefuente, totalRetefuente, totalPorTodo, totalValores) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                    $stmt->bind_param("ssssssssssss", $documentoId, $materiales, $metrosUnidades, $precioUnitario, $cantidad, $precioTotal, $iva, $totalIva, $retefuente, $totalRetefuente, $totalPorTodo, $totalValoresIncluidos);
+                    $stmt = $conn->prepare("INSERT INTO cotizacion (documentoId, material, metros_unidades, precio_unitario, cantidad, precio_total, iva, totalIva, retefuente, totalRetefuente, totalPorTodo, totalValores, precioUnitarioFinalValores) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("sssssssssssss", $documentoId, $materiales, $metrosUnidades, $precioUnitario, $cantidad, $precioTotal, $iva, $totalIva, $retefuente, $totalRetefuente, $totalPorTodo, $totalValoresIncluidos, $precioUnitarioFinal);
                     $stmt->execute();
                     if ($stmt->affected_rows < 1) {
                         $mensaje = mostrarAlerta("Error al insertar los datos, inténtelo de nuevo más tarde.", "danger");

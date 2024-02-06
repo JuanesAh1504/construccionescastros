@@ -5,7 +5,7 @@ require_once __DIR__ . '/sql.php';
 
 function plantillaCotizacion() {
     $sqlPDF = sqlQuerySelect("SELECT c.fechaCotizacion, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, cl.razonSocial, c.organizacionEmpresas, c.alcanceObra, c.material, c.metros_unidades, c.precio_unitario, c.cantidad, c.precio_total, c.totalPorTodo, c.dias, c.manoObra, c.porcentajeAdmin, c.porcentajeUtilidad, c.alquilerEquipos, c.transporte, c.valorTotalCotizacion FROM cotizacion c INNER JOIN clientes cl ON cl.numeroDocumento = c.organizacionEmpresas WHERE c.documentoId = '" . $_GET['id'] . "'");
-    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precio_unitario, cantidad, precio_total, totalValores  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
+    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precioUnitarioFinalValores, cantidad, precio_total, totalValores  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
 
     if ($sqlPDF && mysqli_num_rows($sqlPDF) > 0) {
         $fila = $sqlPDF->fetch_assoc();
@@ -173,6 +173,7 @@ function plantillaCotizacion() {
                         <tr>
                             <th style="width: 200px">Concepto</th>
                             <th>M2 - Unidades</th>
+                            <th>Precio unitario</th>
                             <th>Cantidad</th>
                             <th>Valor total</th>
                         </tr>
@@ -188,13 +189,14 @@ function plantillaCotizacion() {
                                 <tr>
                                     <td>' . $row["material"] . '</td>
                                     <td>' . $row["metros_unidades"] . '</td>
+                                    <td>' . $row["precioUnitarioFinalValores"] . '</td>
                                     <td>' . $row["cantidad"] . '</td>
                                     <td>' . $row["totalValores"] . '</td>
                                 </tr>';
                         }
                     }
                     $html .= '<tr>
-                            <td colspan="4" style="text-align:right;font-weight:bold">Valor total Conceptos: <span style="color:red">'.$fila['valorTotalCotizacion'].'</span></td>
+                            <td colspan="5" style="text-align:right;font-weight:bold">Valor total Conceptos: <span style="color:red">'.$fila['valorTotalCotizacion'].'</span></td>
                         </tr>
                     </tbody>
                 </table><br><br>

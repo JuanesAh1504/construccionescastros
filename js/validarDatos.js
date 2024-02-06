@@ -1,26 +1,20 @@
 function validarFormulario(idFormulario, accion) {
   var campos = document.querySelectorAll(".campoFormulario");
   var errores = [];
-
   for (var i = 0; i < campos.length; i++) {
     var campo = campos[i];
     var valor = campo.value.trim();
     var label = obtenerTextoLabel(campo); // Obtener el texto del label
-
     if (valor === "" && $(campos[i]).attr('class').includes('obligatorio')) {
       errores.push('El campo "' + label + '" no puede estar vacío.');
       continue;
     }
-
     // Validar campos de tipo "number"
     if (campo.type === "number" || campo.className.includes("campoNumero")) {
       if (!validarNumero(valor)) {
         errores.push('El campo "' + label + '" debe contener solo caracteres numéricos.');
       }
     }
-
-     
-
     if (campo.type === "select") {
       if (!validarSelect(valor)) {
         errores.push('Se debe seleccionar una opción para el campo ' + label + '.');
@@ -31,7 +25,6 @@ function validarFormulario(idFormulario, accion) {
     mostrarAlertas(errores, "danger");
     return false; // Evitar que el formulario se envíe si hay errores
   }
-
   if(idFormulario !== "formLoginInicial"){
     enviarInformacion(idFormulario, accion);
     return;

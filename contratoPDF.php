@@ -4,8 +4,8 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/sql.php';
 
 function plantillaCotizacion() {
-    $sqlPDF = sqlQuerySelect("SELECT c.fechaCotizacion, c.fechaCotizacionfin, c.organizacionEmpresas, cl.tipoDocumento, cl.numeroDocumento, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, cl.razonSocial, cl.ciudad, cl.direccion, c.alcanceObra, c.material, c.metros_unidades, c.precio_unitario, c.cantidad, c.precio_total, c.totalPorTodo, c.dias, c.manoObra, c.porcentajeAdmin, c.porcentajeUtilidad, c.alquilerEquipos, c.transporte, c.valorTotalCotizacion FROM cotizacion c    INNER JOIN clientes cl ON cl.numeroDocumento = c.organizacionEmpresas WHERE c.documentoId = '" . $_GET['id'] . "'");
-    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precio_unitario, cantidad, precio_total, totalValores  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
+    $sqlPDF = sqlQuerySelect("SELECT c.fechaCotizacion, c.fechaCotizacionfin, c.organizacionEmpresas, cl.tipoDocumento, cl.numeroDocumento, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, cl.razonSocial, cl.ciudad, cl.direccion, c.alcanceObra, c.material, c.metros_unidades, c.precio_unitario, c.cantidad, c.precio_total, c.totalPorTodo, c.dias, c.manoObra, c.porcentajeAdmin, c.porcentajeUtilidad, c.alquilerEquipos, c.transporte, c.valorTotalCotizacion, c.Porcentaje1, c.Porcentaje2, c.Porcentaje3, c.Porcentaje4 FROM cotizacion c INNER JOIN clientes cl ON cl.numeroDocumento = c.organizacionEmpresas WHERE c.documentoId = '" . $_GET['id'] . "'");
+    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precioUnitarioFinalValores, cantidad, precio_total, totalValores  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
 
     if ($sqlPDF && mysqli_num_rows($sqlPDF) > 0) {
         $fila = $sqlPDF->fetch_assoc();
@@ -31,6 +31,40 @@ function plantillaCotizacion() {
             $nombreCompleto = $fila['razonSocial'];
         }
 
+        $formaDePago = '';
+        $contadorCondiciones = 0;
+        $porcentaje1 = "";
+        $porcentaje2 = "";
+        $porcentaje3 = "";
+        $porcentaje4 = "";
+        if (!empty($fila['Porcentaje1'])) {
+            $porcentaje1 .= ''.$fila['Porcentaje1'].'';
+            $contadorCondiciones++;
+            if (!empty($fila['Porcentaje2'])) {
+                $porcentaje2 .= ''.$fila['Porcentaje2'].'';
+                $contadorCondiciones++;
+                if (!empty($fila['Porcentaje3'])) {
+                    $porcentaje3 .= ''.$fila['Porcentaje3'].'';
+                    $contadorCondiciones++;
+                    if (!empty($fila['Porcentaje4'])) {
+                        $porcentaje4    .= ''.$fila['Porcentaje4'].'';
+                        $contadorCondiciones++;
+                    }
+                    
+                }
+            }
+        }
+
+        if($contadorCondiciones == 1){
+            // Si solo está lleno el primer porcentaje
+            $formaDePago = $porcentaje1 . ' en su totalidad.';
+        }else if($contadorCondiciones == 2){
+            $formaDePago = $porcentaje1 . ' al iniciar, el ' . $porcentaje2 . ' al finalizar entera satisfacción.';
+        }else if($contadorCondiciones == 3){
+            $formaDePago = $porcentaje1 . ' al iniciar, el ' . $porcentaje2 . ' en la mitad de obra y el '.$porcentaje3.' al finalizar entera satisfacción.';
+        }else if($contadorCondiciones == 4){
+            $formaDePago = $porcentaje1 . ' al iniciar, el ' . $porcentaje2 . ' en un cuarto de obra, el '.$porcentaje3.' a mitad de obra y el '.$porcentaje4.' al finalizar entera satisfacción.';
+        }
         $html = '
         <!DOCTYPE html>
         <html lang="en">
@@ -110,6 +144,7 @@ function plantillaCotizacion() {
                     <tr>
                         <th style="width: 200px">Concepto</th>
                         <th>M2 - Unidades</th>
+                        <th>Precio unitario</th>
                         <th>Cantidad</th>
                         <th>Valor total</th>
                     </tr>
@@ -125,13 +160,14 @@ function plantillaCotizacion() {
                             <tr>
                                 <td>' . $row["material"] . '</td>
                                 <td>' . $row["metros_unidades"] . '</td>
+                                <td>' . $row["precioUnitarioFinalValores"] . '</td>
                                 <td>' . $row["cantidad"] . '</td>
                                 <td>' . $row["totalValores"] . '</td>
                             </tr>';
                     }
                 }
                 $html .= '<tr>  
-                        <td colspan="4" style="text-align:right;font-weight:bold">Valor total Conceptos: <span style="color:red">'.$fila['valorTotalCotizacion'].'</span></td>
+                        <td colspan="5" style="text-align:right;font-weight:bold">Valor total Conceptos: <span style="color:red">'.$fila['valorTotalCotizacion'].'</span></td>
                     </tr>
                 </tbody>
             </table><br>
@@ -179,8 +215,8 @@ function plantillaCotizacion() {
            presupuesto a todo costo, anexo de acuerdo a los cual el valor del contrato será de
            <b>
            ('.$fila['valorTotalCotizacion'].')</b><br><br>
-           <b>SEXTA: FORMA DE PAGO: EL CONTRATANTE</b> pagara a <b>EL CONTRATISTA</b>, el
-           50% al iniciar, el 40% a mitad de obra y 10% al finalizar entera satisfacción.<br><br>
+            <b>SEXTA: FORMA DE PAGO: EL CONTRATANTE</b> pagará a <b>EL CONTRATISTA</b>, el
+            '.$formaDePago.'<br><br>
            <b>SEPTIMA: TIEMPO DE ENTREGA:</b> El tiempo de entrega de la obra del presente
            contrato será de '.$fila['dias'].' días contados a partir del '.$fila['fechaCotizacion'].' hasta el '.$fila['fechaCotizacionfin'].', termino durante el cual EL CONTRATISTA deberá cumplir con el objeto
            del contrato.<br><br><br>
@@ -220,9 +256,10 @@ function plantillaCotizacion() {
 }
 
 $mpdf = new \Mpdf\Mpdf();
-$mpdf->setFooter('{PAGENO}');
+$mpdf->setFooter('{PAGENO} de {nb}');
 $html = plantillaCotizacion();
 
 $mpdf->WriteHTML($html);
 $mpdf->Output('archivo.pdf', \Mpdf\Output\Destination::INLINE);
+
 ?>

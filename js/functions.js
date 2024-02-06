@@ -6,24 +6,16 @@ function agregarFila() {
 
     newRow.append($("<td><input type='text' class='inputPersonalizado campoFormulario' id='materiales_" + rowCount + "'></td>"));
     newRow.append($("<td><input type='text' class='inputPersonalizado campoFormulario' id='metrosUnidades_" + rowCount + "'></td>"));
-    newRow.append($("<td><input style='width:110px' type='text' class='inputPersonalizado campoFormulario' id='precioUnitario_" + rowCount + "' onchange='formatoPesoColombiano(this);calcularFormula(\"cantidad_" + rowCount + "\", \"precioUnitario_" + rowCount + "\", \"precioTotal_" + rowCount + "\");calcularIva(\"precioTotal_" + rowCount + "\", \"iva_" + rowCount + "\", \"totalIva_" + rowCount + "\");calcularRetefuente(\"precioTotal_" + rowCount + "\", \"retefuente_" + rowCount + "\", \"totalRetefuente_" + rowCount + "\");valorTotal([\"#precioTotal_" + rowCount + "\", \"#totalIva_" + rowCount + "\", \"#totalRetefuente_" + rowCount + "\"], \"totalPorTodo_" + rowCount + "\");sumarPrecioTotal();calcularCamposAdicionales()'></td>"));
-    newRow.append($("<td><input style='width:70px' type='text' class='inputPersonalizado campoFormulario campoNumero' id='cantidad_" + rowCount + "' value='1' onchange='calcularFormula(\"precioUnitario_" + rowCount + "\", \"cantidad_" + rowCount + "\", \"precioTotal_" + rowCount + "\");calcularIva(\"precioTotal_" + rowCount + "\", \"iva_" + rowCount + "\", \"totalIva_" + rowCount + "\");calcularRetefuente(\"precioTotal_" + rowCount + "\", \"retefuente_" + rowCount + "\", \"totalRetefuente_" + rowCount + "\");valorTotal([\"#precioTotal_" + rowCount + "\", \"#totalIva_" + rowCount + "\", \"#totalRetefuente_" + rowCount + "\"], \"totalPorTodo_" + rowCount + "\");sumarPrecioTotal();calcularCamposAdicionales()'></td>"));
+    newRow.append($("<td><input style='width:110px' type='text' class='inputPersonalizado campoFormulario' id='precioUnitario_" + rowCount + "' onchange='formatoPesoColombiano(this);calcularFormula(\"cantidad_" + rowCount + "\", \"precioUnitario_" + rowCount + "\", \"precioTotal_" + rowCount + "\");calcularIva(\"precioTotal_" + rowCount + "\", \"iva_" + rowCount + "\", \"totalIva_" + rowCount + "\");calcularRetefuente(\"precioTotal_" + rowCount + "\", \"retefuente_" + rowCount + "\", \"totalRetefuente_" + rowCount + "\");valorTotal([\"#precioTotal_" + rowCount + "\", \"#totalIva_" + rowCount + "\", \"#totalRetefuente_" + rowCount + "\"], \"totalPorTodo_" + rowCount + "\");sumarPrecioTotal();calcularCamposAdicionales();calcularCamposAdicionales(2)'></td>"));
+    newRow.append($("<td><input style='width:70px' type='text' class='inputPersonalizado campoFormulario campoNumero' id='cantidad_" + rowCount + "' value='1' onchange='calcularFormula(\"precioUnitario_" + rowCount + "\", \"cantidad_" + rowCount + "\", \"precioTotal_" + rowCount + "\");calcularIva(\"precioTotal_" + rowCount + "\", \"iva_" + rowCount + "\", \"totalIva_" + rowCount + "\");calcularRetefuente(\"precioTotal_" + rowCount + "\", \"retefuente_" + rowCount + "\", \"totalRetefuente_" + rowCount + "\");valorTotal([\"#precioTotal_" + rowCount + "\", \"#totalIva_" + rowCount + "\", \"#totalRetefuente_" + rowCount + "\"], \"totalPorTodo_" + rowCount + "\");sumarPrecioTotal();calcularCamposAdicionales();calcularCamposAdicionales(2)'></td>"));
     newRow.append($("<td><input style='width:110px' type='text' class='inputPersonalizado campoFormulario' id='precioTotal_" + rowCount + "' disabled></td>"));
-    newRow.append($("<td><input style='width:110px' type='text' class='inputPersonalizado campoFormulario' id='iva_" + rowCount + "' onchange='calcularIva(\"precioTotal_" + rowCount + "\", \"iva_" + rowCount + "\", \"totalIva_" + rowCount + "\");valorTotal([\"#precioTotal_" + rowCount + "\", \"#totalIva_" + rowCount + "\", \"#totalRetefuente_" + rowCount + "\"], \"totalPorTodo_" + rowCount + "\");sumarPrecioTotal();calcularCamposAdicionales()'></td>"));
+    newRow.append($("<td><input style='width:110px' type='text' class='inputPersonalizado campoFormulario' id='iva_" + rowCount + "' onchange='calcularIva(\"precioTotal_" + rowCount + "\", \"iva_" + rowCount + "\", \"totalIva_" + rowCount + "\");valorTotal([\"#precioTotal_" + rowCount + "\", \"#totalIva_" + rowCount + "\", \"#totalRetefuente_" + rowCount + "\"], \"totalPorTodo_" + rowCount + "\");sumarPrecioTotal();calcularCamposAdicionales();calcularCamposAdicionales(2)'></td>"));
     newRow.append($("<td><input style='width:110px' type='text' id='totalIva_" + rowCount + "' class='inputPersonalizado campoFormulario' disabled></td>"));
-    newRow.append($("<td><input style='width:110px' type='text' class='inputPersonalizado campoFormulario' id='retefuente_" + rowCount + "' onchange='calcularRetefuente(\"precioTotal_" + rowCount + "\", \"retefuente_" + rowCount + "\", \"totalRetefuente_" + rowCount + "\");valorTotal([\"#precioTotal_" + rowCount + "\", \"#totalIva_" + rowCount + "\", \"#totalRetefuente_" + rowCount + "\"], \"totalPorTodo_" + rowCount + "\");sumarPrecioTotal();calcularCamposAdicionales()'></td>"));
+    newRow.append($("<td><input style='width:110px' type='text' class='inputPersonalizado campoFormulario' id='retefuente_" + rowCount + "' onchange='calcularRetefuente(\"precioTotal_" + rowCount + "\", \"retefuente_" + rowCount + "\", \"totalRetefuente_" + rowCount + "\");valorTotal([\"#precioTotal_" + rowCount + "\", \"#totalIva_" + rowCount + "\", \"#totalRetefuente_" + rowCount + "\"], \"totalPorTodo_" + rowCount + "\");sumarPrecioTotal();calcularCamposAdicionales();calcularCamposAdicionales(2)'></td>"));
     newRow.append($("<td><input style='width:110px' type='text' id='totalRetefuente_" + rowCount + "' class='inputPersonalizado campoFormulario' disabled></td>"));
     newRow.append($("<td><input style='width:110px' type='text' id='totalPorTodo_" + rowCount + "' class='inputPersonalizado campoFormulario' disabled></td>"));    
     newRow.append($("<td><input style='width:110px' type='text' id='totalIncluidoOtrosPrecios_" + rowCount + "' class='inputPersonalizado campoFormulario' disabled></td>"));
-
-    // Agregar las nuevas celdas
-    newRow.append($("<td><input style='width:110px' type='hidden' id='manoObraCalcular_" + rowCount + "' class='inputPersonalizado campoFormulario' onchange='tuFuncion(this);' disabled></td>"));
-    newRow.append($("<td><input style='width:110px' type='hidden' id='porcentajeAdminCalcular_" + rowCount + "' class='inputPersonalizado campoFormulario' onchange='tuFuncion(this);' disabled></td>"));
-    newRow.append($("<td><input style='width:110px' type='hidden' id='porcentajeUtilidadCalcular_" + rowCount + "' class='inputPersonalizado campoFormulario' onchange='tuFuncion(this);' disabled></td>"));
-    newRow.append($("<td><input style='width:110px' type='hidden' id='alquilerEquiposCalcular_" + rowCount + "' class='inputPersonalizado campoFormulario' onchange='tuFuncion(this);' disabled></td>"));
-    newRow.append($("<td><input style='width:110px' type='hidden' id='transporteCalcular_" + rowCount + "' class='inputPersonalizado campoFormulario' onchange='tuFuncion(this);' disabled></td>"));
-    newRow.append($("<td><input style='width:110px' type='hidden' id='elementosProteccionCalcular_" + rowCount + "' class='inputPersonalizado campoFormulario' onchange='tuFuncion(this);' disabled></td>"));
-    newRow.append($("<td><input style='width:110px' type='hidden' id='dotacionCalcular_" + rowCount + "' class='inputPersonalizado campoFormulario' onchange='tuFuncion(this);' disabled></td>"));
+    newRow.append($("<td><input style='width:110px' type='text' id='precioUnitarioFinal_" + rowCount + "' class='inputPersonalizado campoFormulario' disabled></td>"));
 
     newRow.append("<td><button type='button' class='btn btn-danger btn-sm delete-row-button' onclick='eliminarFila(this)'>-</button></td>");
     $('#rowCount').val(rowCount + 1);
@@ -74,6 +66,7 @@ function sumarPrecioTotal() {
     var manoObra = 0;
     var elementosProteccion = 0;
     var totalValoresIncluidos = 0;
+    var precioUnitarioFinal = 0;
     precioTotal += eliminarPuntosYConvertirAFloat($("#precioTotal").val()) || 0; // Tratar el caso especial
     totalIva += eliminarPuntosYConvertirAFloat($("#totalIva").val()) || 0; // Tratar el caso especial
     totalRetefuente += eliminarPuntosYConvertirAFloat($("#totalRetefuente").val()) || 0; // Tratar el caso especial
@@ -81,6 +74,7 @@ function sumarPrecioTotal() {
     manoObra += eliminarPuntosYConvertirAFloat($("#manoObra").val()) || 0; // Tratar el caso especial
     elementosProteccion += eliminarPuntosYConvertirAFloat($("#elementosProteccion").val()) || 0; // Tratar el caso especial
     totalValoresIncluidos += eliminarPuntosYConvertirAFloat($("#totalIncluidoOtrosPrecios").val()) || 0; // Tratar el caso especial
+    precioUnitarioFinal += eliminarPuntosYConvertirAFloat($("#precioUnitarioFinal").val()) || 0; // Tratar el caso especial
 
     // Sumar los valores de los campos con el formato adecuado
     $("input[id^='precioTotal_']").each(function() {
@@ -98,7 +92,10 @@ function sumarPrecioTotal() {
     $("input[id^='totalIncluidoOtrosPrecios_']").each(function() {
         totalValoresIncluidos += eliminarPuntosYConvertirAFloat($(this).val()) || 0;
     });
-
+    $("input[id^='precioUnitarioFinal_']").each(function() {
+        precioUnitarioFinal += eliminarPuntosYConvertirAFloat($(this).val()) || 0;
+    });
+    
     $("#totalNeto").text(precioTotal.toLocaleString('es-CO'));
     $("#totalNetoInput").val(precioTotal.toLocaleString('es-CO'));
 
@@ -110,6 +107,9 @@ function sumarPrecioTotal() {
 
     $("#totalPorTodoTabla").text(totalPorTodo.toLocaleString('es-CO'));
     $("#totalPorTodoTablaInput").val(totalPorTodo.toLocaleString('es-CO'));
+
+    $("#precioUnitarioFinalTabla").text(precioUnitarioFinal.toLocaleString('es-CO'));
+    $("#precioUnitarioFinalInput").val(precioUnitarioFinal.toLocaleString('es-CO'));
 
     $("#totalValoresIncluidos").text(totalValoresIncluidos.toLocaleString('es-CO'));
     $("#totalValoresIncluidosInput").val(totalValoresIncluidos.toLocaleString('es-CO'));
@@ -273,8 +273,11 @@ function calcularConPorcentaje(valor, total) {
         return eliminarPuntosYConvertirAFloat(valor);
     }
 }
-
-function calcularCamposAdicionales() {
+/*
+Tipo 1 = gastos totales incluído otros valores
+Tipo 2 = precio unitario final
+*/
+function calcularCamposAdicionales(tipo) {
     var valorManoObra = $("#manoObra").val();
     var valorPorcentajeAdmin = $("#porcentajeAdmin").val();
     var valorPorcentajeUtilidad = $("#porcentajeUtilidad").val();
@@ -300,9 +303,23 @@ function calcularCamposAdicionales() {
         totalTabla += SvalorManoObra + SvalorPorcentajeAdmin + SvalorPorcentajeUtilidad + SvalorAlquilerEquipos + SvalorTransporte + SvalorElementosProteccion + SvalorDotacion;
 
         if (index === 0) {
+            if(tipo === 2){
+                let campoCantidad = $(filas[index]).find('#cantidad').val();
+                totalTabla = Math.round(totalTabla / campoCantidad);
+                $('#precioUnitarioFinal').val(totalTabla);
+                formatoPesoColombiano($("#precioUnitarioFinal"));
+                continue;
+            }
             $("#totalIncluidoOtrosPrecios").val(totalTabla);
             formatoPesoColombiano($("#totalIncluidoOtrosPrecios"));
         } else {
+            if(tipo === 2){
+                let campoCantidad = $(filas[index]).find('#cantidad_'+index).val();
+                totalTabla = Math.round(totalTabla / campoCantidad);
+                $('#precioUnitarioFinal_'+index).val(totalTabla);
+                formatoPesoColombiano($("#precioUnitarioFinal_"+index));
+                continue;
+            }
             $("#totalIncluidoOtrosPrecios_" + index).val(totalTabla);
             formatoPesoColombiano($("#totalIncluidoOtrosPrecios_" + index));
         }

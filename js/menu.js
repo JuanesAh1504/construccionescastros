@@ -10,12 +10,15 @@ function loadContent(file) {
     // Limpiar el contenido anterior
     contenedor.empty();
     // Cargar el nuevo contenido
-    if (!file.includes("listar")) {
-        // Lógica adicional si no es un archivo de tipo "listar"
-        generarNumeroAleatorio();
-    }
+    
     // Cargar el contenido del archivo en el contenedor
     contenedor.load(file);
+    setTimeout(function(){
+        if (!file.includes("listar")) {
+            // Lógica adicional si no es un archivo de tipo "listar"
+            generarNumeroAleatorio();
+        }
+    }, 500);
 }
 
 function listarDocumentos(documento) {
