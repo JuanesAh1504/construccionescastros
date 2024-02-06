@@ -109,7 +109,7 @@ function sumarPrecioTotal() {
     $("#totalPorTodoTablaInput").val(totalPorTodo.toLocaleString('es-CO'));
 
     $("#precioUnitarioFinalTabla").text(precioUnitarioFinal.toLocaleString('es-CO'));
-    $("#precioUnitarioFinalInput").val(precioUnitarioFinal.toLocaleString('es-CO'));
+    $("#precioUnitarioFinalInput").val(precioUnitarioFinal  .toLocaleString('es-CO'));
 
     $("#totalValoresIncluidos").text(totalValoresIncluidos.toLocaleString('es-CO'));
     $("#totalValoresIncluidosInput").val(totalValoresIncluidos.toLocaleString('es-CO'));
@@ -413,7 +413,7 @@ function cargarInfoCotizaciones(){
     let campo = $('#cotizacionSelect');
     var selectedCotizacion = $(campo).val();
     if(selectedCotizacion !== "") {
-        obtenerInfoCotizacion(selectedCotizacion);
+        detallesContabilidad(selectedCotizacion);
     } else {
         $("#infoCotizacion").empty();
     }
@@ -468,6 +468,157 @@ function obtenerInfoCotizacion(cotizacionID) {
             }
         });
     }
+
+function detallesContabilidad(cotizacionID){
+    sendXML(2, 'detallesContabilidad', '<cotizacionId>'+cotizacionID+'</cotizacionId>', detallesContabilidadAnswer);
+}   
+
+function detallesContabilidadAnswer(xml){
+    if($('resultados', xml).text() == "0"){
+        showAlerta('No se encontraron detalles para la contabilidad de este contrato.', 3);
+        return;
+    }
+    let html = '';
+    let documentoId = $('idCotizacion', xml).text();
+    let fechaCotizacion = $('fechaCotizacion', xml).text();
+    let alcanceObra = $('alcanceObra', xml).text();
+    let porcentajesPago = [""];
+    let elementosPorcentajes = $('porcentajesPago', xml);
+    // Iterar sobre los elementos obtenidos y concatenarlos al array porcentajesPago
+    for (let i = 0; i < elementosPorcentajes.length; i++) {
+        porcentajesPago.push(elementosPorcentajes[i].textContent);
+    }
+    let valoresPago = $('valoresPago', xml);
+    let manoObra = $('manoObra', xml).text();
+    let porcentajeAdmin = $('porcentajeAdmin', xml).text();
+    let porcentajeUtilidad = $('porcentajeUtilidad', xml).text();
+    let alquilerEquipos = $('alquilerEquipos', xml).text();
+    let transporte = $('transporte', xml).text();
+    let elementosProteccion = $('elementosProteccion', xml).text();
+    let Dotacion = $('Dotacion', xml).text();
+    html = '<h3 style="font-weight:bold">'+alcanceObra+'</h3>';
+    let botonModalPago = [];
+     
+    html = '<style>\
+    .tablaContabilidadContrato {\
+      width: 100%;\
+      border: 1px solid black;\
+      border-collapse: collapse;\
+      margin-top: 20px;\
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\
+    }\
+    \
+    .tablaContabilidadContrato th,\
+    .tablaContabilidadContrato td {\
+      padding: 12px;\
+      text-align: center;\
+    }\
+    \
+    .tablaContabilidadContrato th {\
+      background-color: #007bff;\
+      color: #ffffff;\
+    }\
+    \
+    .tablaContabilidadContrato tbody tr:nth-child(even) {\
+      background-color: #f8f9fa;\
+    }\
+    \
+    .tablaContabilidadContrato .total-row {\
+      font-weight: bold;\
+      background-color: #343a40;\
+      color: #ffffff;\
+    }\
+    </style>';
+    for(let i = 0; i < porcentajesPago.length; i++){
+        if(porcentajesPago[i] == ""){
+            continue;
+        }
+        botonModalPago[i] += $(valoresPago[i]).text() == 0; 
+        html += '<table class="table table-responsive tablaContabilidadContrato">\
+        <thead>\
+          <tr>\
+            <th colspan="11" class="card-header">DISCRIMINACIÓN DE PRECIOS '+alcanceObra+'</th>\
+          </tr>\
+          <tr>\
+            <th></th>\
+            <th>Fecha</th>\
+            <th>Porcentaje</th>\
+            <th>Valor pagado</th>\
+            <th>Mano de obra</th>\
+            <th>Porcentaje admin</th>\
+            <th>Porcentaje utilidad</th>\
+            <th>Alquiler de equipos</th>\
+            <th>Transporte</th>\
+            <th>Elementos de protección</th>\
+            <th>Dotacion</th>\
+          </tr>\
+        </thead>\
+        <tbody>\
+          <tr>\
+            <td rowspan=2>\
+            <button onclick="openModal(\'modalP'+i+'\');consultarDatosModalGastos(\'modalP'+i+'\')" class="btn btn-primary btn-sm" ' + (botonModalPago[i] ? 'disabled' : '') + '>Gastos</button>\
+            </td>\
+            <td rowspan=2>'+fechaCotizacion+'</td>\
+            <td rowspan=2>'+porcentajesPago[i]+'</td>\
+            <td rowspan=2>'+$(valoresPago[i]).text()+'</td>\
+            <td>'+manoObra+'</td>\
+            <td>'+porcentajeAdmin+'</td>\
+            <td>'+porcentajeUtilidad+'</td>\
+            <td>'+alquilerEquipos+'</td>\
+            <td>'+transporte+'</td>\
+            <td>'+elementosProteccion+'</td>\
+            <td>'+Dotacion+'</td>\
+          </tr>\
+          <tr>\
+            <td id="manoObraDiscriminacion'+i+'"></td>\
+            <td id="porcentajeAdminDiscriminacion'+i+'"></td>\
+            <td id="porcentajeUtilidadDiscriminado'+i+'"></td>\
+            <td id="alquilerEquiposDiscriminados'+i+'"></td>\
+            <td id="transporteDiscriminado'+i+'"></td>\
+            <td id="elementosProteccionDiscriminado'+i+'"></td>\
+            <td id="DotacionDiscriminado'+i+'"></td>\
+          </tr>\
+          <tr>\
+            <td colspan="11" id="totalRestante'+i+'"></td>\
+          </tr>\
+        </tbody>\
+      </table>';
+      //Se construye el modal
+      html += '<div id="modalP'+i+'" class="modal" onclick="closeModal();">\
+            <div class="modal-content" style="width: 38%;" onclick="event.stopPropagation();">\
+                <span class="close" onclick="closeModal(\'modalP'+i+'\');">&times;</span>\
+                <div style="text-align: center;">\
+                    <b><h3 class="text-dark">Agregar gastos</h3></b>\
+                </div>\
+                <button class="btn btn-primary" onclick="campoAgregarFila(\'#tablaPorcentaje'+i+'\')">+</button>\
+                <table id="tablaPorcentaje'+i+'">\
+                    <tbody>\
+                        <tr>\
+                            <td>\
+                                <div class="row">\
+                                    <div class="col-lg-6">\
+                                        <label for="producto"><b>Producto</b></label>\
+                                        <input type="text" class="form-control campoFormulario obligatorio" id="producto">\
+                                    </div>\
+                                    <div class="col-lg-6">\
+                                        <label for="precio"><b>Precio</b></label>\
+                                        <input type="hidden" id="rowCountModal" class="campoFormulario" value="1">\
+                                        <input type="hidden" id="numeralPorcentaje" class="campoFormulario" value="'+i+'">\
+                                        <input type="hidden" class="campoFormulario obligatorio" value="'+porcentajesPago[i]+'" id="porcentaje">\
+                                        <input type="hidden" class="campoFormulario obligatorio" value="'+documentoId+'" id="idContrato">\
+                                        <input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante'+i+'\', \'valorPorcentaje1Original\');">\
+                                    </div>\
+                                </div>\
+                            </td>\
+                        </tr>\
+                    </tbody>\
+                </table>\
+                <br>\
+                <button class="btn btn-success" onclick="guardarGastos(\'#tablaPorcentaje'+i+'\', \'#totalRestante'+i+'\')">Guardar</button>\                </div>\
+        </div>';
+      $('#infoCotizacion').html(html);
+    }
+}
 
 let valorPorcentaje1Original = 0;
 let valorPorcentaje2Original = 0;

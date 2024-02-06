@@ -33,6 +33,36 @@
                 }
             }
             break;
+        case 'detallesContabilidad':
+            $sql = "SELECT c.*, ct.* FROM cotizacion c INNER JOIN contratosgenerados ct ON ct.numerocontrato = " . $xml->param->cotizacionId . " WHERE c.documentoId = " . $xml->param->cotizacionId;
+            $result = sqlQuerySelect($sql);
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    if($row['material'] == ''){
+                        $response .= '<idCotizacion>'.$row['documentoId'].'</idCotizacion>';
+                        $response .= '<fechaCotizacion>'.$row['fechaCotizacion'].'</fechaCotizacion>';
+                        $response .= '<alcanceObra>'.$row['alcanceObra'].'</alcanceObra>';
+                        $response .= '<porcentajesPago>'.$row['Porcentaje1'].'</porcentajesPago>';
+                        $response .= '<valoresPago>'.$row['valorPago1'].'</valoresPago>';
+                        $response .= '<porcentajesPago>'.$row['Porcentaje2'].'</porcentajesPago>';
+                        $response .= '<valoresPago>'.$row['valorPago2'].'</valoresPago>';
+                        $response .= '<porcentajesPago>'.$row['Porcentaje3'].'</porcentajesPago>';
+                        $response .= '<valoresPago>'.$row['valorPago3'].'</valoresPago>';
+                        $response .= '<porcentajesPago>'.$row['Porcentaje4'].'</porcentajesPago>';
+                        $response .= '<valoresPago>'.$row['valorPago4'].'</valoresPago>';
+                        $response .= '<manoObra>'.$row['manoObra'].'</manoObra>';
+                        $response .= '<porcentajeAdmin>'.$row['porcentajeAdmin'].'</porcentajeAdmin>';
+                        $response .= '<porcentajeUtilidad>'.$row['porcentajeUtilidad'].'</porcentajeUtilidad>';
+                        $response .= '<alquilerEquipos>'.$row['alquilerEquipos'].'</alquilerEquipos>';
+                        $response .= '<transporte>'.$row['transporte'].'</transporte>';
+                        $response .= '<elementosProteccion>'.$row['elementosProteccion'].'</elementosProteccion>';
+                        $response .= '<Dotacion>'.$row['Dotacion'].'</Dotacion>';
+                    }
+                }
+            }else{
+                $response .= '<resultados>0</resultados>';
+            }
+            break;
     }
     header('Content-Type: application/xml');
     $response .= "</response>";
