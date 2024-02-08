@@ -480,15 +480,25 @@ function detallesContabilidadAnswer(xml){
     }
     let html = '';
     let documentoId = $('idCotizacion', xml).text();
-    let fechaCotizacion = $('fechaCotizacion', xml).text();
+    let fechaCotizacion = [""];
+    let fechaCotizacionAux = $('fechaCotizacion', xml);
+    // Iterar sobre los elementos obtenidos y concatenarlos al array fechaCotizacion
+    for (let i = 0; i < fechaCotizacionAux.length; i++) {
+        fechaCotizacion.push($(fechaCotizacionAux[i]).text());
+    }
     let alcanceObra = $('alcanceObra', xml).text();
     let porcentajesPago = [""];
     let elementosPorcentajes = $('porcentajesPago', xml);
     // Iterar sobre los elementos obtenidos y concatenarlos al array porcentajesPago
     for (let i = 0; i < elementosPorcentajes.length; i++) {
-        porcentajesPago.push(elementosPorcentajes[i].textContent);
+        porcentajesPago.push($(elementosPorcentajes[i]).text());
     }
-    let valoresPago = $('valoresPago', xml);
+    let valoresPago = [""];
+    let valoresPagos = $('valoresPago', xml);
+    // Iterar sobre los elementos obtenidos y concatenarlos al array valoresPago
+    for (let i = 0; i < valoresPagos.length; i++) {
+        valoresPago.push($(valoresPagos[i]).text());
+    }
     let manoObra = $('manoObra', xml).text();
     let porcentajeAdmin = $('porcentajeAdmin', xml).text();
     let porcentajeUtilidad = $('porcentajeUtilidad', xml).text();
@@ -499,7 +509,7 @@ function detallesContabilidadAnswer(xml){
     html = '<h3 style="font-weight:bold">'+alcanceObra+'</h3>';
     let botonModalPago = [];
      
-    html = '<style>\
+    html += '<style>\
     .tablaContabilidadContrato {\
       width: 100%;\
       border: 1px solid black;\
@@ -529,95 +539,151 @@ function detallesContabilidadAnswer(xml){
       color: #ffffff;\
     }\
     </style>';
-    for(let i = 0; i < porcentajesPago.length; i++){
-        if(porcentajesPago[i] == ""){
+    for (let i = 0; i < porcentajesPago.length; i++) {
+        if (porcentajesPago[i] == "") {
             continue;
         }
-        botonModalPago[i] += $(valoresPago[i]).text() == 0; 
-        html += '<table class="table table-responsive tablaContabilidadContrato">\
-        <thead>\
-          <tr>\
-            <th colspan="11" class="card-header">DISCRIMINACIÓN DE PRECIOS '+alcanceObra+'</th>\
-          </tr>\
-          <tr>\
-            <th></th>\
-            <th>Fecha</th>\
-            <th>Porcentaje</th>\
-            <th>Valor pagado</th>\
-            <th>Mano de obra</th>\
-            <th>Porcentaje admin</th>\
-            <th>Porcentaje utilidad</th>\
-            <th>Alquiler de equipos</th>\
-            <th>Transporte</th>\
-            <th>Elementos de protección</th>\
-            <th>Dotacion</th>\
-          </tr>\
-        </thead>\
-        <tbody>\
-          <tr>\
-            <td rowspan=2>\
-            <button onclick="openModal(\'modalP'+i+'\');consultarDatosModalGastos(\'modalP'+i+'\')" class="btn btn-primary btn-sm" ' + (botonModalPago[i] ? 'disabled' : '') + '>Gastos</button>\
-            </td>\
-            <td rowspan=2>'+fechaCotizacion+'</td>\
-            <td rowspan=2>'+porcentajesPago[i]+'</td>\
-            <td rowspan=2>'+$(valoresPago[i]).text()+'</td>\
-            <td>'+manoObra+'</td>\
-            <td>'+porcentajeAdmin+'</td>\
-            <td>'+porcentajeUtilidad+'</td>\
-            <td>'+alquilerEquipos+'</td>\
-            <td>'+transporte+'</td>\
-            <td>'+elementosProteccion+'</td>\
-            <td>'+Dotacion+'</td>\
-          </tr>\
-          <tr>\
-            <td id="manoObraDiscriminacion'+i+'"></td>\
-            <td id="porcentajeAdminDiscriminacion'+i+'"></td>\
-            <td id="porcentajeUtilidadDiscriminado'+i+'"></td>\
-            <td id="alquilerEquiposDiscriminados'+i+'"></td>\
-            <td id="transporteDiscriminado'+i+'"></td>\
-            <td id="elementosProteccionDiscriminado'+i+'"></td>\
-            <td id="DotacionDiscriminado'+i+'"></td>\
-          </tr>\
-          <tr>\
-            <td colspan="11" id="totalRestante'+i+'"></td>\
-          </tr>\
-        </tbody>\
-      </table>';
-      //Se construye el modal
-      html += '<div id="modalP'+i+'" class="modal" onclick="closeModal();">\
-            <div class="modal-content" style="width: 38%;" onclick="event.stopPropagation();">\
-                <span class="close" onclick="closeModal(\'modalP'+i+'\');">&times;</span>\
-                <div style="text-align: center;">\
-                    <b><h3 class="text-dark">Agregar gastos</h3></b>\
-                </div>\
-                <button class="btn btn-primary" onclick="campoAgregarFila(\'#tablaPorcentaje'+i+'\')">+</button>\
-                <table id="tablaPorcentaje'+i+'">\
-                    <tbody>\
-                        <tr>\
-                            <td>\
-                                <div class="row">\
-                                    <div class="col-lg-6">\
-                                        <label for="producto"><b>Producto</b></label>\
-                                        <input type="text" class="form-control campoFormulario obligatorio" id="producto">\
-                                    </div>\
-                                    <div class="col-lg-6">\
-                                        <label for="precio"><b>Precio</b></label>\
-                                        <input type="hidden" id="rowCountModal" class="campoFormulario" value="1">\
-                                        <input type="hidden" id="numeralPorcentaje" class="campoFormulario" value="'+i+'">\
-                                        <input type="hidden" class="campoFormulario obligatorio" value="'+porcentajesPago[i]+'" id="porcentaje">\
-                                        <input type="hidden" class="campoFormulario obligatorio" value="'+documentoId+'" id="idContrato">\
-                                        <input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante'+i+'\', \'valorPorcentaje1Original\');">\
-                                    </div>\
-                                </div>\
-                            </td>\
-                        </tr>\
-                    </tbody>\
-                </table>\
-                <br>\
-                <button class="btn btn-success" onclick="guardarGastos(\'#tablaPorcentaje'+i+'\', \'#totalRestante'+i+'\')">Guardar</button>\                </div>\
-        </div>';
-      $('#infoCotizacion').html(html);
+        if (valoresPago[i] == 0 || valoresPago[i] == "") {
+            showAlerta('No se pudo generar la contabilidad del pago ' + i + ', su valor es 0.', 3);
+            continue;
+        }
+        botonModalPago[i] += $(valoresPago[i]).text() == 0;
+        let manoObraValor = calcularPorcentaje(manoObra, porcentajesPago[i]);
+        let porcentajeAdminValor = calcularPorcentaje(porcentajeAdmin, porcentajesPago[i]);
+        let porcentajeUtilidadValor = calcularPorcentaje(porcentajeUtilidad, porcentajesPago[i]);
+        let alquilerEquiposValor = calcularPorcentaje(alquilerEquipos, porcentajesPago[i]);
+        let transporteValor = calcularPorcentaje(transporte, porcentajesPago[i]);
+        let elementosProteccionValor = calcularPorcentaje(elementosProteccion, porcentajesPago[i]);
+        let dotacionValor = calcularPorcentaje(Dotacion, porcentajesPago[i]);
+        let valoresADiscriminar = [manoObraValor, porcentajeAdminValor, porcentajeUtilidadValor, alquilerEquiposValor, transporteValor, elementosProteccionValor, dotacionValor];
+        let discriminacionPreciosHTML = discriminarPorPreciosNuevo(valoresPago[i], valoresADiscriminar, i);
+        // Agregar los valores al HTML
+        html += '<div style="overflow-x:auto;">'; // Div para el scroll horizontal
+        html += '<table class="table table-responsive tablaContabilidadContrato">';
+        html += '<thead>';
+        html += '<tr>';
+        html += '<th colspan="11" class="card-header">DISCRIMINACIÓN DE PRECIOS ' + alcanceObra + '</th>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<th></th>';
+        html += '<th>Fecha</th>';
+        html += '<th>Porcentaje</th>';
+        html += '<th>Valor pagado</th>';
+        html += '<th>Mano de obra</th>';
+        html += '<th>Porcentaje admin</th>';
+        html += '<th>Porcentaje utilidad</th>';
+        html += '<th>Alquiler de equipos</th>';
+        html += '<th>Transporte</th>';
+        html += '<th>Elementos de protección</th>';
+        html += '<th>Dotacion</th>';
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody>';
+        html += '<tr>';
+        html += '<td rowspan=2>';
+        html += '<button onclick="openModal(\'modalP' + i + '\');consultarDatosModalGastos(\'modalP' + i + '\')" class="btn btn-primary btn-sm" ' + (botonModalPago[i] ? 'disabled' : '') + '>Gastos</button>';
+        html += '</td>';
+        html += '<td rowspan=2>' + fechaCotizacion[i] + '</td>';
+        html += '<td rowspan=2>' + porcentajesPago[i] + '</td>';
+        html += '<td rowspan=2>' + valoresPago[i] + '</td>';
+        html += '<td id="manoObra">' + manoObraValor + '</td>';
+        html += '<td id="porcentajeAdmin">' + porcentajeAdminValor + '</td>';
+        html += '<td id="porcentajeUtilidad">' + porcentajeUtilidadValor + '</td>';
+        html += '<td id="alquilerEquipos">' + alquilerEquiposValor + '</td>';
+        html += '<td id="transporte">' + transporteValor + '</td>';
+        html += '<td id="elementosProteccion">' + elementosProteccionValor + '</td>';
+        html += '<td id="Dotacion">' + dotacionValor + '</td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += discriminacionPreciosHTML;
+        html += '</tr>';
+        html += '</tbody>';
+        html += '</table>';
+        html += '</div>'; // Cerrar el div para el scroll horizontal
+    
+        // Construir el modal
+        html += '<div id="modalP' + i + '" class="modal" onclick="closeModal();">';
+        html += '<div class="modal-content" style="width: 38%;" onclick="event.stopPropagation();">';
+        html += '<span class="close" onclick="closeModal(\'modalP' + i + '\');">&times;</span>';
+        html += '<div style="text-align: center;">';
+        html += '<b><h3 class="text-dark">Agregar gastos</h3></b>';
+        html += '</div>';
+        html += '<button class="btn btn-primary" onclick="campoAgregarFila(\'#tablaPorcentaje' + i + '\')">+</button>';
+        html += '<table id="tablaPorcentaje' + i + '">';
+        html += '<tbody>';
+        html += '<tr>';
+        html += '<td>';
+        html += '<div class="row">';
+        html += '<div class="col-lg-6">';
+        html += '<label for="producto"><b>Producto</b></label>';
+        html += '<input type="text" class="form-control campoFormulario obligatorio" id="producto">';
+        html += '</div>';
+        html += '<div class="col-lg-6">';
+        html += '<label for="precio"><b>Precio</b></label>';
+        html += '<input type="hidden" id="rowCountModal" class="campoFormulario" value="1">';
+        html += '<input type="hidden" id="numeralPorcentaje" class="campoFormulario" value="' + i + '">';
+        html += '<input type="hidden" class="campoFormulario obligatorio" value="' + porcentajesPago[i] + '" id="porcentaje">';
+        html += '<input type="hidden" class="campoFormulario obligatorio" value="' + documentoId + '" id="idContrato">';
+        html += '<input type="text" class="form-control campoFormulario obligatorio" id="precio" onchange="formatoPesoColombiano(this); calcularGastosContabilidad(this, \'totalRestante' + i + '\', \'valorPorcentaje1Original\');">';
+        html += '</div>';
+        html += '</div>';
+        html += '</td>';
+        html += '</tr>';
+        html += '</tbody>';
+        html += '</table>';
+        html += '<br>';
+        html += '<button class="btn btn-success" onclick="guardarGastos(\'#tablaPorcentaje' + i + '\', \'#totalRestante' + i + '\')">Guardar</button>';
+        html += '</div>';
+        html += '</div>';
+        $('#infoCotizacion').html(html);
     }
+    
+}
+
+function discriminarPorPreciosNuevo(valor, porcentajes, numero) {
+    if(valor == 0){
+        return;
+    }
+    valor = eliminarPuntosYConvertirAFloat(valor);
+    let manoObraDiscriminada = eliminarPuntosYConvertirAFloat(calcularPorcentaje(valor, porcentajes[0]));
+    valor -= manoObraDiscriminada;
+    let porcentajeAdminDiscriminacion = eliminarPuntosYConvertirAFloat(calcularPorcentaje(valor, porcentajes[1]));
+    valor -= porcentajeAdminDiscriminacion;
+    let porcentajeUtilidadDiscriminado = eliminarPuntosYConvertirAFloat(calcularPorcentaje(valor, porcentajes[2]));
+    valor -= porcentajeUtilidadDiscriminado;
+    let alquilerEquiposDiscriminados = eliminarPuntosYConvertirAFloat(calcularPorcentaje(valor, porcentajes[3]));
+    valor -= alquilerEquiposDiscriminados;
+    let transporteDiscriminado = eliminarPuntosYConvertirAFloat(calcularPorcentaje(valor, porcentajes[4]));
+    valor -= transporteDiscriminado;
+    let elementosProteccionDiscriminado = eliminarPuntosYConvertirAFloat(calcularPorcentaje(valor, porcentajes[5]));
+    valor -= elementosProteccionDiscriminado;
+    let DotacionDiscriminado = eliminarPuntosYConvertirAFloat(calcularPorcentaje(valor, porcentajes[6]));
+    valor -= DotacionDiscriminado;
+    let manoObraHtml = '<td id="manoObraDiscriminacion'+numero+'">' + formatoPesoColombianoReturn(manoObraDiscriminada) + '</td>';
+    let porcentajeAdminHtml = '<td id="porcentajeAdminDiscriminacion'+numero+'">' + formatoPesoColombianoReturn(porcentajeAdminDiscriminacion) + '</td>';
+    let porcentajeUtilidadHtml = '<td id="porcentajeUtilidadDiscriminado'+numero+'">' + formatoPesoColombianoReturn(porcentajeUtilidadDiscriminado) + '</td>';
+    let alquilerEquiposHtml = '<td id="alquilerEquiposDiscriminados'+numero+'">' + formatoPesoColombianoReturn(alquilerEquiposDiscriminados) + '</td>';
+    let transporteHtml = '<td id="transporteDiscriminado'+numero+'">' + formatoPesoColombianoReturn(transporteDiscriminado) + '</td>';
+    let elementosProteccionHtml = '<td id="elementosProteccionDiscriminado'+numero+'">' + formatoPesoColombianoReturn(elementosProteccionDiscriminado) + '</td>';
+    let DotacionHtml = '<td id="DotacionDiscriminado'+numero+'">' + formatoPesoColombianoReturn(DotacionDiscriminado) + '</td>';
+    let totalRestanteHtml = '</tr><tr><td colspan="11" id="totalRestante'+numero+'"><h3>Total restante:</h3>' + formatoPesoColombianoReturn(valor) + '</td>';
+    return manoObraHtml + porcentajeAdminHtml + porcentajeUtilidadHtml + alquilerEquiposHtml + transporteHtml + elementosProteccionHtml + DotacionHtml + totalRestanteHtml;
+}
+
+function calcularPorcentaje(valor, porcentaje){
+    if(valor == 0 || porcentaje == 0){
+        return 0;
+    }
+    if (typeof valor === 'string' && valor.includes('%')) {
+        return valor;
+    }
+    valor = eliminarPuntosYConvertirAFloat(valor);
+    if (typeof porcentaje === 'string' && porcentaje.includes('%')) {
+        porcentaje = parseInt(porcentaje.replace('%', ''));
+        valor = Math.round((porcentaje / 100) * valor);
+        return formatoPesoColombianoReturn(valor);
+    }
+    return formatoPesoColombianoReturn(porcentaje);
 }
 
 let valorPorcentaje1Original = 0;
@@ -1087,21 +1153,6 @@ function discriminarPorPrecios(valor, porcentajes, numero) {
     $('#totalRestante'+numero).html('<h3>Total restante:</h3>'+formatoPesoColombianoReturn(valor));
 }
 
-function calcularPorcentaje(valor, porcentaje) {
-    if(porcentaje === "" || porcentaje === undefined){
-        return 0;
-    }
-    // Eliminar el símbolo "%" y convertir a entero
-    if(porcentaje.includes('%')){
-        porcentaje = parseInt(porcentaje.replace('%', '').trim(), 10);
-        // Calcular el porcentaje del valor
-        return (valor * porcentaje) / 100;
-    }else{
-        return eliminarPuntosYConvertirAFloat(porcentaje);
-    }
-    
-}
-
 function generarContrato(cotizacion){
     if(cotizacion == '' || cotizacion == undefined){
         return;
@@ -1151,6 +1202,11 @@ function cargarContratosAnswer(xml){
         $('#pagoPorcentaje2').val($('porcentaje2', xml).text());
         $('#pagoPorcentaje3').val($('porcentaje3', xml).text());
         $('#pagoPorcentaje4').val($('porcentaje4', xml).text());
+        $('#fechaPagado1').val($('fechaPago1', xml).text());
+        $('#fechaPagado2').val($('fechaPago2', xml).text());
+        $('#fechaPagado3').val($('fechaPago3', xml).text());
+        $('#fechaPagado4').val($('fechaPago4', xml).text());
+
         let valorPago1 = $('valorPago1', xml).text();
         let valorPago2 = $('valorPago2', xml).text();
         let valorPago3 = $('valorPago3', xml).text();
@@ -1217,14 +1273,14 @@ function calcularTotalRestarContrato(totalContrato, valores){
 
 function editarPagoContrato(){
     let cotizacionId = $('#documentoId').val();
-    let valorPago1 = $('#valorPago1').val();
-    let valorPago2 = $('#valorPago2').val();
-    let valorPago3 = $('#valorPago3').val();
-    let valorPago4 = $('#valorPago4').val();
-    let fechaPago1 = $('#fechaPagado1').val();
-    let fechaPago2 = $('#fechaPagado2').val();
-    let fechaPago3 = $('#fechaPagado3').val();
-    let fechaPago4 = $('#fechaPagado4').val();
+    let valorPago1 = $('#valorPago1').prop('disabled') ? '' : $('#valorPago1').val();
+    let valorPago2 = $('#valorPago2').prop('disabled') ? '' : $('#valorPago2').val();
+    let valorPago3 = $('#valorPago3').prop('disabled') ? '' : $('#valorPago3').val();
+    let valorPago4 = $('#valorPago4').prop('disabled') ? '' : $('#valorPago4').val();
+    let fechaPago1 = $('#fechaPagado1').prop('disabled') ? '' : $('#fechaPagado1').val();
+    let fechaPago2 = $('#fechaPagado2').prop('disabled') ? '' : $('#fechaPagado2').val();
+    let fechaPago3 = $('#fechaPagado3').prop('disabled') ? '' : $('#fechaPagado3').val();
+    let fechaPago4 = $('#fechaPagado4').prop('disabled') ? '' : $('#fechaPagado4').val();
     let pagado1 = $('#checkboxPagado1').prop('checked');
     let pagado2 = $('#checkboxPagado2').prop('checked');
     let pagado3 = $('#checkboxPagado3').prop('checked');

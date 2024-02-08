@@ -40,7 +40,10 @@
                 while ($row = $result->fetch_assoc()) {
                     if($row['material'] == ''){
                         $response .= '<idCotizacion>'.$row['documentoId'].'</idCotizacion>';
-                        $response .= '<fechaCotizacion>'.$row['fechaCotizacion'].'</fechaCotizacion>';
+                        $response .= '<fechaCotizacion>'.$row['fechaPago1'].'</fechaCotizacion>';
+                        $response .= '<fechaCotizacion>'.$row['fechaPago2'].'</fechaCotizacion>';
+                        $response .= '<fechaCotizacion>'.$row['fechaPago3'].'</fechaCotizacion>';
+                        $response .= '<fechaCotizacion>'.$row['fechaPago4'].'</fechaCotizacion>';
                         $response .= '<alcanceObra>'.$row['alcanceObra'].'</alcanceObra>';
                         $response .= '<porcentajesPago>'.$row['Porcentaje1'].'</porcentajesPago>';
                         $response .= '<valoresPago>'.$row['valorPago1'].'</valoresPago>';

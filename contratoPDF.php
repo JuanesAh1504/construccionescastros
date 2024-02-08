@@ -5,7 +5,7 @@ require_once __DIR__ . '/sql.php';
 
 function plantillaCotizacion() {
     $sqlPDF = sqlQuerySelect("SELECT c.fechaCotizacion, c.fechaCotizacionfin, c.organizacionEmpresas, cl.tipoDocumento, cl.numeroDocumento, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, cl.razonSocial, cl.ciudad, cl.direccion, c.alcanceObra, c.material, c.metros_unidades, c.precio_unitario, c.cantidad, c.precio_total, c.totalPorTodo, c.dias, c.manoObra, c.porcentajeAdmin, c.porcentajeUtilidad, c.alquilerEquipos, c.transporte, c.valorTotalCotizacion, c.Porcentaje1, c.Porcentaje2, c.Porcentaje3, c.Porcentaje4 FROM cotizacion c INNER JOIN clientes cl ON cl.numeroDocumento = c.organizacionEmpresas WHERE c.documentoId = '" . $_GET['id'] . "'");
-    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precioUnitarioFinalValores, cantidad, precio_total, totalValores  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
+    $sqlConceptos = sqlQuerySelect("SELECT material, metros_unidades, precioUnitarioFinalValores, cantidad, precio_total, totalValores, retefuente  FROM cotizacion WHERE documentoId = '" . $_GET['id'] . "'");
 
     if ($sqlPDF && mysqli_num_rows($sqlPDF) > 0) {
         $fila = $sqlPDF->fetch_assoc();
@@ -150,6 +150,8 @@ function plantillaCotizacion() {
                     </tr>
                 </thead>
                 <tbody>';
+                $tieneRetefuente = false;
+                $valorPrimeraRetefuente = "";
                 if ($sqlConceptos) {
                     while ($row = $sqlConceptos->fetch_assoc()) {
                         if ($row['material'] == '' && $row['metros_unidades'] == ''
@@ -164,6 +166,10 @@ function plantillaCotizacion() {
                                 <td>' . $row["cantidad"] . '</td>
                                 <td>' . $row["totalValores"] . '</td>
                             </tr>';
+                            if($row['retefuente'] != ""){
+                                $tieneRetefuente = true;
+                                $valorPrimeraRetefuente = $row['retefuente'];
+                            }
                     }
                 }
                 $html .= '<tr>  
@@ -238,15 +244,23 @@ function plantillaCotizacion() {
            <b>DECIMA: PRIMERA DOMICILIO:</b> Las partes acuerdan que para los efectos del
            presente contrato el domicilio será '.$fila['ciudad'].', '.$fila['direccion'].', lugar de ejecución dela obra.<br><br>
            Este documento prestara merito ejecutivo para el cobro de las sumas que en él se
-           mencionan y se dejen de pagar luego de prestado el servicio.<br><br>
-           
-           <b>DECIMA: SEGUNDA RETENCION EN LA FUENTE: EL CONTRATANTE</b> aplicara
-           una retención en la fuente del 2% a el <b>CONTRATISTA</b>.
-           Para constancia de todo lo anterior y en señal de aceptación, se suscribe el presente
-           contrato el documento en dos ejemplares de un mismo tenor y valor a los 20 días
-           del mes de septiembre 2023</p>
-            
-        </html>';
+           mencionan y se dejen de pagar luego de prestado el servicio.<br><br>';
+           if($tieneRetefuente){
+                $html .= '<b>DECIMA: SEGUNDA RETENCION EN LA FUENTE: EL CONTRATANTE</b> aplicará
+                una retención en la fuente del '.$valorPrimeraRetefuente.' a el <b>CONTRATISTA</b>.
+                Para constancia de todo lo anterior y en señal de aceptación, se suscribe el presente
+                contrato el documento en dos ejemplares de un mismo tenor y valor al '.obtenerFechaActual().'.</p>';
+           }
+        $html .= '<div class="firmaElectronica">
+        <img src="'.  __DIR__ . '/img/firmaElectronica.jpeg" style="width:200px"><br>
+        <span>JUAN FERNANDO CASTRO HERNANDEZ</span><br>
+        <span>CONTRATISTA</span>
+    </div><br>
+    <footer>
+        <span>CARRERA 17#7-121 LOCAL 101 EDIFICIO LAS ACACIAS GIRARDOTA <br>
+        TELÉFONOS 3668720 - 3128949012
+        </span>
+    </footer></html>';
     } else {
         echo '<script>alert("No se encontraron datos para crear el PDF");window.close();</script>';
         exit;
