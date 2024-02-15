@@ -181,6 +181,85 @@
                     }
                 }
                 break;
+            case 'I-cuentaCobro':
+                $idCuentaCobro = rand(10000, 99000);
+                $cliente = $xml->param->valor[1];
+                $query = "SELECT IFNULL(MAX(consecutivo_cliente), 0) + 1 AS nuevo_consecutivo 
+                            FROM cuentaCobro 
+                            WHERE cliente = '".$cliente."'";
+                $query = sqlQuerySelect($query);
+                if($query->num_rows > 0){
+                    $consecutivo = $query->fetch_assoc();
+                }
+                $sqlExistenciaCuentaCobro = sqlQuerySelect("SELECT id FROM cuentacobro WHERE id = '".$idCuentaCobro."' AND Cliente = '".$cliente."' AND consecutivo_cliente = '".$consecutivo['nuevo_consecutivo']."'");
+                if(SQLNumRow($sqlExistenciaCuentaCobro)){
+                    $idCuentaCobro = rand(10000, 99000);
+                }
+                $fecha = $xml->param->valor[0];
+                $stmt = $conn->prepare("INSERT INTO cuentacobro (id, Fecha, Cliente, consecutivo_cliente) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("ssss", $idCuentaCobro, $fecha, $cliente, $consecutivo['nuevo_consecutivo']);
+                $stmt->execute();
+                $contadorEjecuciones = 0;
+                if ($stmt->affected_rows < 1) {
+                    $response .= '<respuesta>ERROR</respuesta><documento>Cuenta de cobro</documento>';
+                    return;
+                }else{
+                    $contadorEjecuciones++;
+                }
+                
+                $indiceInicial = 3; // El índice a partir del cual quieres comenzar a iterar
+                for ($i = $indiceInicial; $i < count($xml->param->valor); $i += 2) {
+                    $concepto = $xml->param->valor[$i];
+                    $valor = $xml->param->valor[$i + 1];
+                    $concepto_id = $i;
+                    $stmt = $conn->prepare("INSERT INTO cuentacobro (id, consecutivo_cliente, Cliente, concepto_id, concepto, precio) VALUES (?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("ssssss", $idCuentaCobro, $consecutivo['nuevo_consecutivo'], $cliente, $concepto_id, $concepto, $valor);
+                    $stmt->execute();
+                    if ($stmt->affected_rows < 1) {
+                        $response .= '<respuesta>ERROR</respuesta><documento>Cuenta de cobro</documento>';
+                        return;
+                    }else{
+                        $contadorEjecuciones++;
+                    }
+                }
+                if($contadorEjecuciones >= 2){
+                    $response .= '<respuesta>OK</respuesta><documento>Cuenta de cobro</documento><idCuentaCobro>'.$idCuentaCobro.'</idCuentaCobro><consecutivo>'.$consecutivo['nuevo_consecutivo'].'</consecutivo>';
+                }
+                break;
+            case 'U-cuentaCobro':
+                $idCuentaCobro = $xml->param->valor[0];
+                $consecutivo = $xml->param->valor[1];
+                $fecha = $xml->param->valor[2];
+                $cliente = $xml->param->valor[3];
+
+                // Verificar si la cuenta de cobro ya existe
+                $sqlExistenciaCuentaCobro = sqlQuerySelect("SELECT id FROM cuentacobro WHERE id = '".$idCuentaCobro."'");
+                if(SQLNumRow($sqlExistenciaCuentaCobro)) {
+                    // La cuenta de cobro ya existe, entonces actualiza los datos
+                    $stmt = $conn->prepare("UPDATE cuentacobro SET Fecha = ?, Cliente = ? WHERE id = ? AND consecutivo_cliente = ?");
+                    $stmt->bind_param("ssss", $fecha, $cliente, $idCuentaCobro, $consecutivo);
+                    $stmt->execute();
+
+                    if ($stmt->affected_rows < 1) {
+                        $response .= '<respuesta>ERROR</respuesta><documento>Cuenta de cobro</documento>';
+                        return;
+                    } else {
+                        $response .= '<respuesta>OK editado</respuesta><documento>Cuenta de cobro</documento><idCuentaCobro>'.$idCuentaCobro.'</idCuentaCobro><consecutivo>'.$consecutivo.'</consecutivo>';
+                    }
+                } else {
+                    // La cuenta de cobro no existe, entonces crea una nueva
+                    $stmt = $conn->prepare("INSERT INTO cuentacobro (id, Fecha, Cliente, consecutivo_cliente) VALUES (?, ?, ?, ?)");
+                    $stmt->bind_param("ssss", $idCuentaCobro, $fecha, $cliente, $consecutivo);
+                    $stmt->execute();
+
+                    if ($stmt->affected_rows < 1) {
+                        $response .= '<respuesta>ERROR</respuesta><documento>Cuenta de cobro</documento>';
+                        return;
+                    } else {
+                        $response .= '<respuesta>OK</respuesta><documento>Cuenta de cobro</documento><idCuentaCobro>'.$idCuentaCobro.'</idCuentaCobro><consecutivo>'.$consecutivo.'</consecutivo>';
+                    }
+                }
+                break;
     }
     header('Content-Type: application/xml');
     $response .= "</response>";

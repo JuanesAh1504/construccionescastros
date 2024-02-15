@@ -118,7 +118,7 @@
                             <input type="text" id="correoElectronico" class="form-control" value="<?php if($esEdicion){echo $fila['correoElectronico'];}?>">
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="<?php if($esEdicion){echo 'guardar(2)';}else{ echo 'guardar(1)';}?>">Enviar</button>
+                    <button type="button" class="btn btn-primary" onclick="<?php if($esEdicion) {echo 'guardar(2, \'user\')';} else { echo 'guardar(1, \'user\')';} ?>">Enviar</button>
                 </div>
             </div>
         </form>

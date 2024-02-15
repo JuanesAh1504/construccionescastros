@@ -37,27 +37,6 @@ function eliminarFila(){
     }, 50);
 }
 
-function agregarCeldaCotizacion(){
-    var firstRow = $("#dynamic-table tbody tr:first").clone();
-    var rowCount = 
-    $(firstRow).find('input').each(function () {
-        var currentId = $(this).attr('id');
-        if (currentId) {
-            var newId = currentId + "_" + rowCount;
-            $(this).attr('id', newId);
-        }
-        if ($(this).is('input') && $(this).attr('onchange')) {
-            var originalOnchange = $(this).attr('onchange');
-            $(this).attr('onchange', originalOnchange + '_' + rowCount);
-        }
-        if ($(this).is('input')) {
-            // Limpiar el valor de los input de texto
-            $(this).val('');
-        }
-    });
-    $("#dynamic-table tbody").append(firstRow);
-}
-
 function sumarPrecioTotal() {
     var precioTotal = 0;
     var totalIva = 0;
@@ -351,6 +330,72 @@ function peticionListado(accion, datos){
         },
     });
 }
+
+function peticionListadoXML(accion){
+    sendXML(2, accion, '', peticionListadoXMLAnswer);
+}
+
+let nombreDominio = window.location.hostname;
+function peticionListadoXMLAnswer(xml) {
+    if ($('respuesta', xml).text() == "0 datos") {
+        showAlerta('No se encontraron datos para listar.', 1);
+        return false;
+    }
+
+    let encabezados = $('encabezado', xml).map(function () {
+        return $(this).text();
+    }).get();
+
+    let documento = $('documento', xml).text();
+    let tabla = '<div class="table-responsive table-hover">';
+    tabla += '<table id="tablaCotizaciones" class="table table-bordered table-striped">';
+    tabla += '<thead class="bg-primary text-white">';
+    tabla += '<tr>';
+    tabla += '<th></th>';
+    for (let i = 0; i < encabezados.length; i++) {
+        tabla += '<th>' + encabezados[i] + '</th>';
+    }
+    tabla += '<th colspan=2></th>';
+    tabla += '</tr>';
+    tabla += '</thead>';
+    tabla += '<tbody>';
+
+    let tablas = $('tabla', xml);
+    for (let j = 0; j < tablas.length; j++) {
+        let tablaElement = tablas.eq(j);
+        let cuerpoElement = tablaElement.find("cuerpo");
+        if (cuerpoElement.length > 0) { // Verificar si hay datos en el cuerpo antes de agregar la fila
+            tabla += '<tr>';
+            tabla += '<td><a style="color: #007bff" onclick="listarDocumentos(\'cuentaCobro.php?consecutivo=' + tablaElement.find("consecutivoCliente").text() + '&Cliente=' + tablaElement.find("Cliente").text() + '\')">Ver</a>';
+
+            for (let k = 0; k < cuerpoElement.length; k++) {
+                tabla += '<td>' + cuerpoElement.eq(k).text() + '</td>';
+            }
+
+            if (documento == "Cuenta de cobro") {
+                let mensajeWhatsApp = "¡Hola, " + tablaElement.find("NombreCompleto").text() + "! Esta es tu cuenta de cobro número: " + tablaElement.find("consecutivoCliente").text() + ", por favor, da clic en el siguiente enlace para descargar el PDF con la cuenta de cobro. \n\n\[Descargar PDF] (https://construccionescastros.com/cuentaCobroPDF.php?consecutivo=" + tablaElement.find("consecutivoCliente").text() + "&Cliente=" + tablaElement.find("Cliente").text() + ")";
+                let enlace = 'https://construccionescastros.com/castrossSolucion/cuentaCobroPDF.php?consecutivo=' + tablaElement.find("consecutivoCliente").text() + '&Cliente=' + tablaElement.find("Cliente").text();
+
+                // Creamos el enlace del mensaje con el enlace formateado como HTML
+                let enlaceWhatsApp = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(mensajeWhatsApp);
+
+                // Creamos el enlace de WhatsApp con el mensaje
+                tabla += '<td style="width:5px"><a href="'+enlace+'" target="_blank"><center><i class="bx bxs-file-pdf"></i>PDF Cuenta cobro</center></a></td>';
+                tabla += '<td style="width:5px"><a href="'+enlaceWhatsApp+ '" target="_blank"><center><i class="bx bxs-file-pdf"></i>Compartir por WhatsApp</center></a></td>';
+
+            }
+            tabla += '</tr>';
+        }
+    }
+
+    tabla += '</tbody>';
+    tabla += '</table>';
+    tabla += '</div>';
+
+    $('#tablaListado').html(tabla);
+}
+
+
 
 function descargarPDF(idDocumento) {
     // Realiza una solicitud AJAX al servidor para llamar a la función PHP

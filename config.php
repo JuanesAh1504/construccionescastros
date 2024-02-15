@@ -41,4 +41,11 @@
         $anio = $fecha_actual['year'];
         return $dia . ' de ' . $mes . ' ' . $anio;
     }
+
+    function obtenerFechaActualInput() {
+        date_default_timezone_set('America/Bogota');
+        // Obtiene la fecha actual
+        $fecha_actual = date('Y-m-d');
+        return $fecha_actual;
+    }
 ?>

@@ -66,6 +66,68 @@
                 $response .= '<resultados>0</resultados>';
             }
             break;
+        case 'L-cuentaCobro':
+            $sql = "SELECT cl.tipoDocumento, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, cl.razonSocial, 
+            c.Cliente, c.consecutivo_cliente, MAX(c.Fecha) AS Fecha FROM cuentacobro c INNER JOIN clientes cl ON cl.numeroDocumento = c.Cliente 
+            GROUP BY cl.tipoDocumento, cl.primerNombre, cl.segundoNombre, cl.primerApellido, cl.segundoApellido, cl.razonSocial, 
+            c.Cliente, c.consecutivo_cliente";
+            $result = sqlQuerySelect($sql);
+            if($result->num_rows > 0){
+                // Variable para controlar si ya se han generado los encabezados
+                $encabezadosGenerados = false;
+
+                while ($row = $result->fetch_assoc()) {
+                    if (!$encabezadosGenerados) {
+                        // Generar encabezados solo la primera vez que se entra al bucle
+                        $response .= '<tabla>';
+                        $response .= '<encabezado>Consecutivo</encabezado>';
+                        $response .= '<encabezado>Cliente</encabezado>';
+                        $response .= '<encabezado>Fecha</encabezado>';
+                        $response .= '</tabla>';
+                        
+                        // Marcar que los encabezados ya han sido generados
+                        $encabezadosGenerados = true;
+                    }
+                    $nombreCompleto = '';
+
+                    if (!empty($row['primerNombre'])) {
+                        $nombreCompleto .= $row['primerNombre'];
+                    }
+
+                    if (!empty($row['segundoNombre'])) {
+                        $nombreCompleto .= ' ' . $row['segundoNombre'];
+                    }
+
+                    if (!empty($row['primerApellido'])) {
+                        $nombreCompleto .= ' ' . $row['primerApellido'];
+                    }
+
+                    if (!empty($row['segundoApellido'])) {
+                        $nombreCompleto .= ' ' . $row['segundoApellido'];
+                    }
+
+                    // Si ninguno de los campos de nombre está lleno, utilizamos la razón social
+                    if (empty($nombreCompleto)) {
+                        $nombreCompleto = $row['razonSocial'];
+                    }
+
+                    // Generar datos de fila
+                    $response .= '<tabla>';
+                    $response .= '<cuerpo>'.$row['consecutivo_cliente'].'</cuerpo>';
+                    $response .= '<cuerpo>'.$nombreCompleto.'</cuerpo>';
+                    $response .= '<cuerpo>'.$row['Fecha'].'</cuerpo>';
+                    $response .= '<consecutivoCliente>'.$row['consecutivo_cliente'].'</consecutivoCliente>';
+                    $response .= '<Cliente>'.$row['Cliente'].'</Cliente>';
+                    $response .= '<NombreCompleto>'.$nombreCompleto.'</NombreCompleto>';
+                    $response .= '</tabla>';
+                }
+                $response .= '<documento>Cuenta de cobro</documento>';
+                
+
+            }else{
+                $response .= '<respuesta>0 datos</respuesta>';
+            }
+            break;
     }
     header('Content-Type: application/xml');
     $response .= "</response>";

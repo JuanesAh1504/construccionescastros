@@ -40,6 +40,11 @@ function updateRowCount(table) {
     $('#rowCountModal').val(rowCount);
 }
 
+function updateRowCountTabla(table) {
+    let rowCount = $(table + ' tbody tr:not(.addNuevaFila)').length;
+    $('#rowCount').val(rowCount);
+}
+
 function vacio(variable){
     if (variable === null || variable === undefined || variable === '') {
         return true; // Devolver true si se encuentra un valor vacío, nulo o indefinido
@@ -61,4 +66,50 @@ function activarCampos(checkbox, numeral) {
         $(campoValorPagado).prop('disabled', true);
         $(campoFechaPagado).prop('disabled', true);
     }
+}
+
+function duplicarFilas(tablaOrigen, cantidad = 1) {
+    let rowCount = parseInt($("#rowCount").val()) || 0;
+    rowCount += cantidad;
+    $('#rowCount').val(rowCount);
+
+    let tabla = $(tablaOrigen);
+    let filaClonar = tabla.find('tbody tr:first').clone();
+    filaClonar.find('input[type="text"]').val('');
+    let numFilas = tabla.find('tbody tr').length;
+
+    // Clonar la fila según la cantidad especificada
+    for (let i = 0; i < cantidad; i++) {
+        let filaClonada = filaClonar.clone();
+        tabla.find('tbody').append(filaClonada);
+
+        // Modificar los atributos de ID y onchange de los elementos clonados
+        filaClonada.find('[id]').each(function () {
+            let originalId = $(this).attr('id');
+            $(this).attr('id', originalId + '_' + (numFilas - 1)); // Incrementar el número de fila
+            let onchangeAttr = $(this).attr('onchange');
+            if (onchangeAttr) {
+                $(this).attr('onchange', onchangeAttr.replace(originalId, originalId + '_' + (numFilas - 1)));
+            }
+        });
+
+        // Añadir botón de eliminación
+        let botonEliminar = $('<button type="button" class="btn btn-danger btn-sm btnEliminarFila">-</button>');
+        botonEliminar.click(function() {
+            $(this).closest('tr').remove(); // Eliminar la fila al hacer clic en el botón
+            updateRowCountTabla(tablaOrigen); // Actualizar el contador después de eliminar la fila
+            cuentaCobroTotal();
+        });
+        filaClonada.append($('<td>').append(botonEliminar));
+    }
+}
+
+function cuentaCobroTotal(){
+    let total = 0;
+    $('#conceptosCuentaCobro tbody input[id^="precioTotal"]').each(function() {
+        let valor = eliminarPuntosYConvertirAFloat($(this).val()) || 0;
+        total += valor;
+    });
+    $('#totalCuentaCobro').text(formatoPesoColombianoReturn(total)); // Mostrar el total en el footer
+    $('#totalCuentaCobroInput').val(formatoPesoColombianoReturn(total)); // Mostrar el total en el footer
 }

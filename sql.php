@@ -2,7 +2,7 @@
     include_once("config.php");
     conectarBaseDeDatos();
     function sqlQuerySelect($sql) {
-        global $conn;
+            global $conn;
             $resultado = $conn->query($sql);
         if ($resultado) {
             return $resultado;
@@ -74,8 +74,6 @@
         }
     }
     
-    
-    
     function xmlActualizarDatos($tabla, $idCampos, $valores, $condicion) {
         if (count($idCampos) !== count($valores)) {
             return false;
@@ -103,4 +101,11 @@
             return false;
         }
     }    
+
+    function SQLNumRow($query){
+        if($query -> num_rows > 0){
+            return true;
+        }
+        return false;
+    }
 ?>

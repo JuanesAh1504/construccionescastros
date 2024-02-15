@@ -40,6 +40,12 @@
                     <i class="align-middle" data-feather="folder-plus"></i> <span class="align-middle">Contabilidad</span>
                 </a>
             </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" onclick="loadContent('cuentaCobro.php');" ontouchstart="listarDocumentos('listarCuentaCobro.php');" oncontextmenu="listarDocumentos('listarCuentaCobro.php');" >
+                    <i class="align-middle" data-feather="dollar-sign"></i> <span class="align-middle">Cuenta de cobro</span>
+                </a>
+            </li>
         </ul>
     </div>
 </nav>
